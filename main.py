@@ -6,7 +6,7 @@ import time
 # Import database and helper utilities
 from utils.database import Database
 from utils.helpers import (
-    load_image, PUP_RED, PUP_GOLD, LIGHT_BG, PUP_LOGO_PATH,
+    load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, PUP_LOGO_PATH, # <-- Added WHITE_BG here
     QUESTION_MARK_PATH, CART_ICON_PATH, USER_ICON_PATH, create_rounded_rectangle,
     HEADER_FONT, TITLE_FONT, GLOBAL_FONT
 )
