@@ -3,7 +3,7 @@ from tkinter import messagebox
 from tkinter import ttk # For Treeview
 from utils.helpers import (
     load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, GLOBAL_FONT, GLOBAL_FONT_BOLD,
-    TITLE_FONT, HEADER_FONT, BORDER_COLOR, CART_ICON_PATH, USER_ICON_PATH
+    TITLE_FONT, HEADER_FONT, BORDER_COLOR, CART_ICON_PATH, USER_ICON_PATH, GRAY_TEXT # Added GRAY_TEXT
 )
 import os
 
@@ -21,7 +21,7 @@ class InventoryManagementScreen(tk.Frame):
 
         # --- Top Bar (Icons) ---
         top_bar_frame = tk.Frame(self, bg=LIGHT_BG)
-        top_bar_frame.pack(fill="x", pady=10, padx=20)
+        top_bar_frame.pack(fill="x", pady=5, padx=10) # Reduced padding
 
         # Cart Icon (can be hidden for admin screen)
         self.cart_icon_image = self.controller.cart_icon
@@ -42,18 +42,17 @@ class InventoryManagementScreen(tk.Frame):
         back_button.pack(side="left", padx=5)
 
         # --- Inventory Management Header ---
-        tk.Label(self, text="INVENTORY MANAGEMENT", font=HEADER_FONT, fg=PUP_RED, bg=LIGHT_BG).pack(pady=(40, 20))
-        tk.Frame(self, bg=PUP_RED, height=2).pack(fill="x", padx=30, pady=(0, 20)) # Underline
+        tk.Label(self, text="INVENTORY MANAGEMENT", font=HEADER_FONT, fg=PUP_RED, bg=LIGHT_BG).pack(pady=(20, 10)) # Reduced padding
+        tk.Frame(self, bg=PUP_RED, height=2).pack(fill="x", padx=15, pady=(0, 10)) # Reduced padding
 
         # --- Input Fields for Item Management ---
         input_frame = tk.Frame(self, bg=LIGHT_BG)
-        input_frame.pack(fill="x", padx=30, pady=5)
+        input_frame.pack(fill="x", padx=15, pady=5) # Reduced padding
 
-        # Helper for a simple label + entry row
         def create_input_row(parent, label_text, textvariable, is_readonly=False):
             row_frame = tk.Frame(parent, bg=LIGHT_BG)
-            row_frame.pack(fill="x", pady=2)
-            tk.Label(row_frame, text=label_text, font=GLOBAL_FONT, fg=PUP_RED, bg=LIGHT_BG, width=15, anchor="w").pack(side="left")
+            row_frame.pack(fill="x", pady=1) # Reduced padding
+            tk.Label(row_frame, text=label_text, font=GLOBAL_FONT, fg=PUP_RED, bg=LIGHT_BG, width=10, anchor="w").pack(side="left") # Reduced width
             entry = tk.Entry(row_frame, textvariable=textvariable, font=GLOBAL_FONT, relief="solid", bd=1,
                              highlightbackground=PUP_GOLD, highlightthickness=1, bg="white", fg="gray", insertbackground=PUP_RED)
             entry.pack(side="left", fill="x", expand=True)
@@ -61,21 +60,20 @@ class InventoryManagementScreen(tk.Frame):
                 entry.config(state="readonly")
             return entry
 
-        self.item_id_entry = create_input_row(input_frame, "ITEM ID:", self.item_id_var, is_readonly=True) # ID is typically auto-generated
+        self.item_id_entry = create_input_row(input_frame, "ITEM ID:", self.item_id_var, is_readonly=True)
         self.item_name_entry = create_input_row(input_frame, "ITEM NAME:", self.item_name_var)
         self.quantity_entry = create_input_row(input_frame, "QUANTITY:", self.quantity_var)
         self.price_entry = create_input_row(input_frame, "PRICE:", self.price_var)
 
         # --- Action Buttons ---
         button_frame = tk.Frame(self, bg=LIGHT_BG)
-        button_frame.pack(pady=20)
+        button_frame.pack(pady=10) # Reduced padding
 
-        # Reusing create_styled_button, but adapting for simple aesthetic
         def create_simple_button(parent, text, command, bg_color):
             btn = tk.Button(parent, text=text, command=command, font=GLOBAL_FONT_BOLD,
                             fg="white", bg=bg_color, activebackground=PUP_RED,
-                            activeforeground="white", bd=0, relief="flat", width=10)
-            btn.pack(side="left", padx=5)
+                            activeforeground="white", bd=0, relief="flat", width=8) # Reduced width
+            btn.pack(side="left", padx=3) # Reduced padding
             return btn
 
         create_simple_button(button_frame, "Add Item:", self.add_item, PUP_RED)
@@ -83,33 +81,31 @@ class InventoryManagementScreen(tk.Frame):
         create_simple_button(button_frame, "Update", self.update_item, PUP_RED)
         create_simple_button(button_frame, "Delete", self.delete_item, PUP_GOLD)
 
-        tk.Frame(self, bg=PUP_RED, height=2).pack(fill="x", padx=30, pady=(20, 0)) # Underline
+        tk.Frame(self, bg=PUP_RED, height=2).pack(fill="x", padx=15, pady=(10, 0)) # Reduced padding
 
 
         # --- Inventory Table (Treeview) ---
-        # Style for Treeview
         style = ttk.Style()
-        style.theme_use("clam") # 'clam', 'alt', 'default', 'classic'
+        style.theme_use("clam")
         style.configure("Treeview.Heading", font=GLOBAL_FONT_BOLD, background=PUP_RED, foreground="white")
-        style.configure("Treeview", font=GLOBAL_FONT, rowheight=25, background=WHITE_BG, fieldbackground=WHITE_BG)
+        style.configure("Treeview", font=GLOBAL_FONT, rowheight=20, background=WHITE_BG, fieldbackground=WHITE_BG) # Reduced rowheight
         style.map('Treeview', background=[('selected', PUP_GOLD)])
 
         columns = ("ID", "NAME", "QUANTITY", "PRICE")
-        self.inventory_tree = ttk.Treeview(self, columns=columns, show="headings", height=15)
-        self.inventory_tree.pack(fill="both", expand=True, padx=30, pady=10)
+        self.inventory_tree = ttk.Treeview(self, columns=columns, show="headings", height=10) # Reduced height
+        self.inventory_tree.pack(fill="both", expand=True, padx=15, pady=5) # Reduced padding
 
         for col in columns:
             self.inventory_tree.heading(col, text=col)
-            self.inventory_tree.column(col, width=100, anchor="center") # Default width
+            self.inventory_tree.column(col, width=80, anchor="center") # Reduced default width
 
-        self.inventory_tree.column("ID", width=50)
-        self.inventory_tree.column("NAME", width=150)
-        self.inventory_tree.column("QUANTITY", width=80)
-        self.inventory_tree.column("PRICE", width=80)
+        self.inventory_tree.column("ID", width=40) # Smaller ID column
+        self.inventory_tree.column("NAME", width=120) # Smaller Name column
+        self.inventory_tree.column("QUANTITY", width=60) # Smaller Quantity column
+        self.inventory_tree.column("PRICE", width=60) # Smaller Price column
 
-        # Scrollbar for Treeview
         tree_scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.inventory_tree.yview)
-        tree_scrollbar.pack(side="right", fill="y", padx=(0,30))
+        tree_scrollbar.pack(side="right", fill="y", padx=(0,10)) # Reduced padding
         self.inventory_tree.configure(yscrollcommand=tree_scrollbar.set)
         
         self.inventory_tree.bind("<<TreeviewSelect>>", self.on_item_select)
@@ -117,7 +113,6 @@ class InventoryManagementScreen(tk.Frame):
         self.load_products()
 
     def load_products(self):
-        # Clear existing entries in treeview
         for i in self.inventory_tree.get_children():
             self.inventory_tree.delete(i)
 
@@ -142,7 +137,7 @@ class InventoryManagementScreen(tk.Frame):
         self.item_name_var.set("")
         self.quantity_var.set("")
         self.price_var.set("")
-        self.inventory_tree.selection_remove(self.inventory_tree.selection()) # Deselect item
+        self.inventory_tree.selection_remove(self.inventory_tree.selection())
 
     def add_item(self):
         name = self.item_name_var.get().strip()
@@ -178,7 +173,6 @@ class InventoryManagementScreen(tk.Frame):
         if not selected_item:
             messagebox.showwarning("Warning", "Please select an item to view.")
             return
-        # Data is already loaded into entry fields by on_item_select
 
     def update_item(self):
         item_id = self.item_id_var.get().strip()
@@ -228,4 +222,3 @@ class InventoryManagementScreen(tk.Frame):
             self.clear_fields()
         else:
             messagebox.showerror("Error", "Failed to delete item.")
-

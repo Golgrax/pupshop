@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from utils.helpers import (
     load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, GLOBAL_FONT, GLOBAL_FONT_BOLD,
-    TITLE_FONT, HEADER_FONT, BORDER_COLOR, CART_ICON_PATH, USER_ICON_PATH, GRAY_TEXT, # <-- GRAY_TEXT must be here
+    TITLE_FONT, HEADER_FONT, BORDER_COLOR, CART_ICON_PATH, USER_ICON_PATH, GRAY_TEXT,
     create_rounded_rectangle
 )
 class OrderHistoryScreen(tk.Frame):
@@ -13,7 +13,7 @@ class OrderHistoryScreen(tk.Frame):
 
         # --- Top Bar (Icons) ---
         top_bar_frame = tk.Frame(self, bg=LIGHT_BG)
-        top_bar_frame.pack(fill="x", pady=10, padx=20)
+        top_bar_frame.pack(fill="x", pady=5, padx=10) # Reduced padding
 
         # Cart Icon
         self.cart_icon_image = self.controller.cart_icon
@@ -34,19 +34,17 @@ class OrderHistoryScreen(tk.Frame):
         back_button.pack(side="left", padx=5)
 
         # --- Order History Header (Custom Canvas Drawing) ---
-        header_canvas = tk.Canvas(self, width=300, height=50, bd=0, highlightthickness=0, bg=LIGHT_BG)
-        header_canvas.pack(pady=20)
-        # Draw rounded rectangle for the header
-        create_rounded_rectangle(header_canvas, 1, 1, 299, 49, radius=25,
+        header_canvas = tk.Canvas(self, width=250, height=40, bd=0, highlightthickness=0, bg=LIGHT_BG) # Reduced size
+        header_canvas.pack(pady=10) # Reduced padding
+        create_rounded_rectangle(header_canvas, 1, 1, 249, 39, radius=20, # Reduced radius
                                  fill=PUP_GOLD, outline=PUP_RED, width=2)
-        header_canvas.create_text(150, 25, text="Order History", font=TITLE_FONT, fill=PUP_RED, anchor="center")
+        header_canvas.create_text(125, 20, text="Order History", font=TITLE_FONT, fill=PUP_RED, anchor="center") # Adjusted text pos
 
 
         # --- Order Table Header ---
         header_frame = tk.Frame(self, bg=LIGHT_BG)
-        header_frame.pack(fill="x", padx=30, pady=(20, 5))
+        header_frame.pack(fill="x", padx=10, pady=(10, 3)) # Reduced padding
 
-        # Use labels for header, with padding to simulate lines
         tk.Label(header_frame, text="Ref No.", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG, bd=0, relief="flat").pack(side="left", expand=True)
         tk.Label(header_frame, text="Order\nstatus", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG, bd=0, relief="flat").pack(side="left", expand=True)
         tk.Label(header_frame, text="Quantity", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG, bd=0, relief="flat").pack(side="left", expand=True)
@@ -54,7 +52,7 @@ class OrderHistoryScreen(tk.Frame):
 
         # --- Scrollable Area for Order Items ---
         self.order_canvas = tk.Canvas(self, bg=LIGHT_BG, highlightthickness=0)
-        self.order_canvas.pack(side="left", fill="both", expand=True, padx=20)
+        self.order_canvas.pack(side="left", fill="both", expand=True, padx=10) # Reduced padding
 
         self.order_scrollbar = tk.Scrollbar(self, orient="vertical", command=self.order_canvas.yview)
         self.order_scrollbar.pack(side="right", fill="y")
@@ -63,7 +61,7 @@ class OrderHistoryScreen(tk.Frame):
         self.order_canvas.bind('<Configure>', lambda e: self.order_canvas.configure(scrollregion = self.order_canvas.bbox("all")))
 
         self.order_list_frame = tk.Frame(self.order_canvas, bg=LIGHT_BG)
-        self.order_canvas.create_window((0, 0), window=self.order_list_frame, anchor="nw", width=410)
+        self.order_canvas.create_window((0, 0), window=self.order_list_frame, anchor="nw", relwidth=1) # Use relwidth=1
 
         self.load_orders()
 
@@ -74,7 +72,6 @@ class OrderHistoryScreen(tk.Frame):
             self.controller.show_frame("LoginScreen")
             return
 
-        # Clear existing orders
         for widget in self.order_list_frame.winfo_children():
             widget.destroy()
 
@@ -87,11 +84,10 @@ class OrderHistoryScreen(tk.Frame):
         for order in orders:
             order_id, order_date, total_amount, status = order
 
-            # Get total quantity for this order
             total_quantity = self.db.fetch_one("SELECT SUM(quantity) FROM order_items WHERE order_id = ?", (order_id,))[0] or 0
 
             order_frame = tk.Frame(self.order_list_frame, bg=WHITE_BG, bd=1, relief="solid", highlightbackground=BORDER_COLOR, highlightthickness=1)
-            order_frame.pack(fill="x", pady=5, padx=5)
+            order_frame.pack(fill="x", pady=3, padx=3) # Reduced padding
 
             # Ref No.
             tk.Label(order_frame, text=order_id, font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(side="left", expand=True)
@@ -99,12 +95,8 @@ class OrderHistoryScreen(tk.Frame):
             tk.Label(order_frame, text=status, font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(side="left", expand=True)
             # Quantity
             tk.Label(order_frame, text=total_quantity, font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(side="left", expand=True)
-            # Payment (Assumed 'Paid' if COD)
+            # Payment
             tk.Label(order_frame, text=f"P{total_amount:.2f}", font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(side="left", expand=True)
             
-            # Optional: Add a button or bind to view order details
-            # tk.Button(order_frame, text="View Details", command=lambda o_id=order_id: self.view_order_details(o_id)).pack(side="right")
-            
     def view_order_details(self, order_id):
-        # Implement a new screen or pop-up to show detailed items in an order
         messagebox.showinfo("Order Details", f"Viewing details for Order ID: {order_id}")

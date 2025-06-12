@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from utils.helpers import (
     load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, GLOBAL_FONT, GLOBAL_FONT_BOLD,
-    TITLE_FONT, HEADER_FONT, BORDER_COLOR, CART_ICON_PATH, USER_ICON_PATH, GRAY_TEXT # <-- Added HEADER_FONT and GRAY_TEXT
+    TITLE_FONT, HEADER_FONT, BORDER_COLOR, CART_ICON_PATH, USER_ICON_PATH, GRAY_TEXT
 )
 import os
 
@@ -14,7 +14,7 @@ class ShoppingCartScreen(tk.Frame):
 
         # --- Top Bar (Icons) ---
         top_bar_frame = tk.Frame(self, bg=LIGHT_BG)
-        top_bar_frame.pack(fill="x", pady=10, padx=20)
+        top_bar_frame.pack(fill="x", pady=5, padx=10) # Reduced padding
 
         # Cart Icon (for current screen, but it's part of the global nav)
         self.cart_icon_image = self.controller.cart_icon
@@ -36,11 +36,11 @@ class ShoppingCartScreen(tk.Frame):
 
         # --- Shopping Cart Title ---
         self.shopping_cart_title = tk.Label(self, text="Shopping cart", font=TITLE_FONT, fg=PUP_RED, bg=LIGHT_BG, anchor="w")
-        self.shopping_cart_title.pack(fill="x", padx=20, pady=(10, 5))
+        self.shopping_cart_title.pack(fill="x", padx=10, pady=(5, 5)) # Reduced padding
 
         # --- Scrollable Area for Cart Items ---
         self.cart_canvas = tk.Canvas(self, bg=LIGHT_BG, highlightthickness=0)
-        self.cart_canvas.pack(side="left", fill="both", expand=True, padx=20)
+        self.cart_canvas.pack(side="left", fill="both", expand=True, padx=10) # Reduced padding
 
         self.cart_scrollbar = tk.Scrollbar(self, orient="vertical", command=self.cart_canvas.yview)
         self.cart_scrollbar.pack(side="right", fill="y")
@@ -49,7 +49,8 @@ class ShoppingCartScreen(tk.Frame):
         self.cart_canvas.bind('<Configure>', lambda e: self.cart_canvas.configure(scrollregion = self.cart_canvas.bbox("all")))
 
         self.cart_items_frame = tk.Frame(self.cart_canvas, bg=LIGHT_BG)
-        self.cart_canvas.create_window((0, 0), window=self.cart_items_frame, anchor="nw", width=410)
+        # Use relwidth=1 so it expands with the canvas. The canvas's width is relative to the container.
+        self.cart_canvas.create_window((0, 0), window=self.cart_items_frame, anchor="nw", relwidth=1) 
 
         self.cart_item_widgets = {} # To keep track of item frames for quantity updates
 
@@ -57,12 +58,12 @@ class ShoppingCartScreen(tk.Frame):
 
         # --- CHECK OUT Button ---
         self.checkout_button_frame = tk.Frame(self, bg=LIGHT_BG)
-        self.checkout_button_frame.pack(fill="x", pady=10)
+        self.checkout_button_frame.pack(fill="x", pady=5) # Reduced padding
         self.checkout_button = tk.Button(self.checkout_button_frame, text="CHECK OUT", font=HEADER_FONT,
                                          fg=PUP_RED, bg=PUP_GOLD, activebackground=PUP_RED,
                                          activeforeground="white", bd=0, relief="flat",
                                          command=self.go_to_checkout)
-        self.checkout_button.pack(pady=10)
+        self.checkout_button.pack(pady=5) # Reduced padding
 
     def load_cart_items(self):
         # Clear existing items
@@ -76,53 +77,47 @@ class ShoppingCartScreen(tk.Frame):
             return
 
         product_ids = ",".join(map(str, current_cart.keys()))
-        # Fetch product details for items in cart
         products_in_cart = self.db.fetch_all(f"SELECT id, name, price, image_path FROM products WHERE id IN ({product_ids})")
 
         for product in products_in_cart:
             product_id, name, price, image_path = product
             quantity = current_cart.get(product_id, 0)
-            if quantity == 0: continue # Skip if quantity is somehow 0
+            if quantity == 0: continue
 
             product_image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'images', image_path)
             
             item_frame = tk.Frame(self.cart_items_frame, bg=WHITE_BG, bd=1, relief="solid", highlightbackground=BORDER_COLOR, highlightthickness=1)
-            item_frame.pack(fill="x", pady=5, padx=5)
+            item_frame.pack(fill="x", pady=3, padx=3) # Reduced padding
 
-            # Left side: Checkbox and Image
+            # Left side: Image
             left_section = tk.Frame(item_frame, bg=WHITE_BG)
-            left_section.pack(side="left", padx=5, pady=5)
+            left_section.pack(side="left", padx=3, pady=3) # Reduced padding
 
-            # Assuming all items are selected by default for checkout
-            # checkbox = tk.Checkbutton(left_section, bg=WHITE_BG, activebackground=WHITE_BG)
-            # checkbox.pack(side="left", padx=(0, 10))
-
-            img = load_image(product_image_path, (80, 80))
+            img = load_image(product_image_path, (70, 70)) # Reduced image size
             if img:
                 img_label = tk.Label(left_section, image=img, bg=WHITE_BG)
-                img_label.image = img # Keep a reference
-                img_label.pack(side="left", padx=5)
+                img_label.image = img
+                img_label.pack(side="left", padx=3)
             else:
-                tk.Label(left_section, text="[No Image]", font=GLOBAL_FONT, bg=WHITE_BG).pack(side="left", padx=5)
+                tk.Label(left_section, text="[No Image]", font=GLOBAL_FONT, bg=WHITE_BG).pack(side="left", padx=3)
 
             # Middle section: Product Name and Price
             details_section = tk.Frame(item_frame, bg=WHITE_BG)
-            details_section.pack(side="left", fill="x", expand=True, padx=5)
+            details_section.pack(side="left", fill="x", expand=True, padx=3) # Reduced padding
 
-            tk.Label(details_section, text=name, font=GLOBAL_FONT_BOLD, fg=GRAY_TEXT, bg=WHITE_BG, wraplength=200, justify="left").pack(anchor="w")
-            tk.Label(details_section, text=f"P{price:.2f}", font=GLOBAL_FONT, fg=PUP_RED, bg=WHITE_BG).pack(anchor="w", pady=(2,0))
+            tk.Label(details_section, text=name, font=GLOBAL_FONT_BOLD, fg=GRAY_TEXT, bg=WHITE_BG, wraplength=130, justify="left").pack(anchor="w") # Reduced wraplength
+            tk.Label(details_section, text=f"P{price:.2f}", font=GLOBAL_FONT, fg=PUP_RED, bg=WHITE_BG).pack(anchor="w", pady=(1,0)) # Reduced padding
 
             # Right side: Quantity control and Remove button
             quantity_control_frame = tk.Frame(item_frame, bg=WHITE_BG)
-            quantity_control_frame.pack(side="right", padx=5, pady=5)
+            quantity_control_frame.pack(side="right", padx=3, pady=3) # Reduced padding
 
-            # Quantity buttons
             minus_button = tk.Button(quantity_control_frame, text="-", font=GLOBAL_FONT, fg="white", bg=PUP_RED, bd=0, relief="flat",
                                      command=lambda p_id=product_id: self.update_quantity(p_id, -1))
             minus_button.pack(side="left")
 
             quantity_label = tk.Label(quantity_control_frame, text=f"{quantity}", font=GLOBAL_FONT_BOLD, bg=WHITE_BG, fg=PUP_RED)
-            quantity_label.pack(side="left", padx=5)
+            quantity_label.pack(side="left", padx=3) # Reduced padding
 
             plus_button = tk.Button(quantity_control_frame, text="+", font=GLOBAL_FONT, fg="white", bg=PUP_RED, bd=0, relief="flat",
                                     command=lambda p_id=product_id: self.update_quantity(p_id, 1))
@@ -131,13 +126,12 @@ class ShoppingCartScreen(tk.Frame):
             self.cart_item_widgets[product_id] = {
                 "frame": item_frame,
                 "quantity_label": quantity_label,
-                "image_label": img_label # Store reference for image to prevent GC
+                "image_label": img_label
             }
             
-            # Add a delete icon (X) to remove item from cart
             remove_button = tk.Button(item_frame, text="X", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG, bd=0, relief="flat",
                                       command=lambda p_id=product_id: self.remove_item(p_id))
-            remove_button.pack(side="right", padx=5, anchor="n")
+            remove_button.pack(side="right", padx=3, anchor="n") # Reduced padding
 
     def update_quantity(self, product_id, change):
         current_cart = self.controller.get_cart()
@@ -155,14 +149,13 @@ class ShoppingCartScreen(tk.Frame):
         if confirm:
             self.controller.remove_from_cart(product_id)
             if product_id in self.cart_item_widgets:
-                self.cart_item_widgets[product_id]["frame"].destroy() # Remove the frame
-                del self.cart_item_widgets[product_id] # Remove from tracking dict
+                self.cart_item_widgets[product_id]["frame"].destroy()
+                del self.cart_item_widgets[product_id]
             messagebox.showinfo("Cart Update", "Item removed successfully.")
-            self.load_cart_items() # Reload to update empty cart message if needed
+            self.load_cart_items()
 
     def go_to_checkout(self):
         if not self.controller.get_cart():
             messagebox.showwarning("Checkout", "Your shopping cart is empty!")
             return
         self.controller.show_frame("CheckoutScreen")
-

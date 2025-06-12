@@ -17,24 +17,24 @@ class LoginScreen(tk.Frame):
 
         # --- PUP Logo ---
         self.pup_logo_label = tk.Label(self, image=self.controller.pup_logo, bg=LIGHT_BG)
-        self.pup_logo_label.pack(pady=(40, 20))
+        self.pup_logo_label.pack(pady=(20, 10)) # Reduced padding
 
         self.header_text = tk.Label(self, text="Welcome Back!",
                                     font=HEADER_FONT, fg=PUP_RED, bg=LIGHT_BG)
-        self.header_text.pack(pady=20)
+        self.header_text.pack(pady=10) # Reduced padding
 
         # Input fields using custom rounded entry
-        self.email_entry = create_rounded_entry_field(self, "Email Address :", self.email_var)
-        self.password_entry = create_rounded_entry_field(self, "Password:", self.password_var, is_password=True)
+        self.email_entry = create_rounded_entry_field(self, "Email Address :", self.email_var, width=280) # Explicitly set width
+        self.password_entry = create_rounded_entry_field(self, "Password:", self.password_var, is_password=True, width=280) # Explicitly set width
 
         # Buttons using custom styled buttons
         button_frame = tk.Frame(self, bg=LIGHT_BG)
-        button_frame.pack(pady=20)
+        button_frame.pack(pady=10) # Reduced padding
 
-        self.login_button_canvas = create_styled_button(button_frame, "LOGIN", self.login_user, PUP_RED, PUP_GOLD)
+        self.login_button_canvas = create_styled_button(button_frame, "LOGIN", self.login_user, PUP_RED, PUP_GOLD, width=120, height=30) # Explicitly set size
         self.login_button_canvas.pack(pady=5)
 
-        self.register_button_canvas = create_styled_button(button_frame, "Register Here", self.go_to_register, BUTTON_BLUE_DARK, BUTTON_BLUE_LIGHT)
+        self.register_button_canvas = create_styled_button(button_frame, "Register Here", self.go_to_register, BUTTON_BLUE_DARK, BUTTON_BLUE_LIGHT, width=120, height=30) # Explicitly set size
         self.register_button_canvas.pack(pady=5)
 
     def login_user(self):
@@ -52,7 +52,7 @@ class LoginScreen(tk.Frame):
             if check_password(password, hashed_password):
                 messagebox.showinfo("Login Success", f"Welcome, {name}!")
                 self.controller.set_current_user(user_id)
-                self.controller.show_frame("HomeScreen") # Transition to home screen
+                self.controller.show_frame("HomeScreen")
                 self.clear_fields()
             else:
                 messagebox.showerror("Login Error", "Invalid email or password.")
@@ -65,4 +65,3 @@ class LoginScreen(tk.Frame):
     def clear_fields(self):
         self.email_var.set("")
         self.password_var.set("")
-

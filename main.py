@@ -8,10 +8,10 @@ from utils.helpers import (
     load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, PUP_LOGO_PATH,
     QUESTION_MARK_PATH, CART_ICON_PATH, USER_ICON_PATH,
     HEADER_FONT, TITLE_FONT, GLOBAL_FONT,
-    create_rounded_rectangle # We will use this here for the main border as well, not create_oval
+    create_rounded_rectangle # We will use this here for the main border
 )
 
-# Import screen modules (ensure all imports are correct in these files too as per previous steps)
+# Import screen modules
 from screens.login_screen import LoginScreen
 from screens.register_screen import RegisterScreen
 from screens.home_screen import HomeScreen
@@ -27,7 +27,7 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("PUP E-Shop")
-        self.geometry("360x640") # This is your target window size
+        self.geometry("360x640") # A common modern phone portrait resolution
         self.resizable(False, False)
         self.configure(bg=LIGHT_BG)
 
@@ -40,10 +40,10 @@ class App(tk.Tk):
         self.current_frame_name = None # <--- Initialize this *before* any frames are created
 
         # Load common images once
-        self.pup_logo = load_image(PUP_LOGO_PATH, (120, 120)) # Ensure this image exists
-        self.question_mark_icon = load_image(QUESTION_MARK_PATH, (40, 40)) # Ensure this image exists
-        self.cart_icon = load_image(CART_ICON_PATH, (30, 30)) # Ensure this image exists
-        self.user_icon = load_image(USER_ICON_PATH, (30, 30)) # Ensure this image exists
+        self.pup_logo = load_image(PUP_LOGO_PATH, (120, 120))
+        self.question_mark_icon = load_image(QUESTION_MARK_PATH, (40, 40))
+        self.cart_icon = load_image(CART_ICON_PATH, (30, 30))
+        self.user_icon = load_image(USER_ICON_PATH, (30, 30))
         # --- End of crucial initializations ---
 
         # --- CORRECTED CANVAS AND CONTAINER SETUP ---
@@ -57,16 +57,15 @@ class App(tk.Tk):
 
         # Draw the rounded rectangle border on the outer_canvas
         # The coordinates are for the outer edge of the screen frame.
-        create_rounded_rectangle(self.outer_canvas, 10, 10, canvas_width - 10, canvas_height - 10,
+        create_rounded_rectangle(self.outer_canvas, 5, 5, canvas_width - 5, canvas_height - 5, # Adjusted coords for tight fit
                                  radius=border_radius, fill=WHITE_BG, outline=PUP_RED, width=2)
 
         # Create a frame to hold all screens, placed *inside* the drawn rounded area.
         # Its placement and dimensions must be carefully calculated to fit within the drawn border.
-        # For a 360x640 window with 10px outer padding and 20px radius, roughly:
         container_x = 15 # Padding from left/top border
         container_y = 15
-        container_width = canvas_width - 2 * container_x # Total width - 2*padding
-        container_height = canvas_height - 2 * container_y # Total height - 2*padding
+        container_width = canvas_width - 2 * container_x
+        container_height = canvas_height - 2 * container_y
 
         self.container = tk.Frame(self.outer_canvas, bg=WHITE_BG) # Use WHITE_BG for inner content area
         self.container.place(x=container_x, y=container_y, width=container_width, height=container_height)
@@ -105,9 +104,12 @@ class App(tk.Tk):
 
 
     def show_frame(self, page_name, product_id=None, animate=True):
-        # ... (rest of the show_frame method remains the same)
+        """
+        Switches between frames with an optional slide animation.
+        """
         new_frame = self.frames[page_name]
 
+        # Pass data to specific screens if needed
         if page_name == "ProductDetailScreen" and product_id is not None:
             new_frame.load_product(product_id)
         elif page_name == "ShoppingCartScreen":
@@ -118,11 +120,6 @@ class App(tk.Tk):
             new_frame.load_addresses()
         elif page_name == "InventoryManagementScreen":
              new_frame.load_products()
-
-        # The important change is here, setting the initial position
-        # For the first frame, current_frame_name is None, so it directly raises.
-        # For subsequent frames, old_frame will be placed to the left.
-        # New frame is placed to the right if animating.
 
         if self.current_frame_name is None or not animate:
             new_frame.tkraise()
@@ -159,7 +156,6 @@ class App(tk.Tk):
                 self.current_frame_name = page_name
 
         animate_swipe()
-
 
     def set_current_user(self, user_id):
         self.current_user_id = user_id

@@ -1,15 +1,15 @@
 import tkinter as tk
 from tkinter import messagebox
 import datetime
-import os          # <--- Add this line
-import sqlite3     # <--- Add this line
+import os
+import sqlite3
 
 from utils.helpers import (
     load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, GLOBAL_FONT, GLOBAL_FONT_BOLD,
     TITLE_FONT, HEADER_FONT, CHECK_MARK_PATH, CART_ICON_PATH, USER_ICON_PATH,
     BORDER_COLOR, GRAY_TEXT
 )
-import datetime
+# Note: datetime imported twice, can remove one.
 
 class CheckoutScreen(tk.Frame):
     def __init__(self, parent, controller):
@@ -17,11 +17,11 @@ class CheckoutScreen(tk.Frame):
         self.controller = controller
         self.db = self.controller.get_db()
 
-        self.check_mark_img = load_image(CHECK_MARK_PATH, (25, 25))
+        self.check_mark_img = load_image(CHECK_MARK_PATH, (20, 20)) # Reduced size
 
         # --- Top Bar (Icons) ---
         top_bar_frame = tk.Frame(self, bg=LIGHT_BG)
-        top_bar_frame.pack(fill="x", pady=10, padx=20)
+        top_bar_frame.pack(fill="x", pady=5, padx=10) # Reduced padding
 
         # Cart Icon
         self.cart_icon_image = self.controller.cart_icon
@@ -42,30 +42,30 @@ class CheckoutScreen(tk.Frame):
         back_button.pack(side="left", padx=5)
 
         # --- "STUDY WITH PASSION" Header ---
-        tk.Label(self, text="STUDY WITH\nPASSION", font=HEADER_FONT, fg=PUP_RED, bg=LIGHT_BG, justify="center").pack(pady=(20, 10))
+        tk.Label(self, text="STUDY WITH\nPASSION", font=HEADER_FONT, fg=PUP_RED, bg=LIGHT_BG, justify="center").pack(pady=(10, 5)) # Reduced padding
         tk.Label(self, text="PUPStudyWithStyle", font=GLOBAL_FONT, fg="gray", bg=LIGHT_BG).pack()
 
 
         # --- Item Summary (Example: First item in cart) ---
         item_frame = tk.Frame(self, bg=WHITE_BG, bd=1, relief="solid", highlightbackground=PUP_GOLD, highlightthickness=1)
-        item_frame.pack(fill="x", padx=30, pady=20)
+        item_frame.pack(fill="x", padx=15, pady=10) # Reduced padding
 
         self.item_image_label = tk.Label(item_frame, bg=WHITE_BG)
-        self.item_image_label.pack(side="left", padx=10, pady=10)
+        self.item_image_label.pack(side="left", padx=5, pady=5) # Reduced padding
 
         item_details_frame = tk.Frame(item_frame, bg=WHITE_BG)
-        item_details_frame.pack(side="left", fill="x", expand=True, padx=10)
+        item_details_frame.pack(side="left", fill="x", expand=True, padx=5) # Reduced padding
 
-        self.item_name_label = tk.Label(item_details_frame, text="", font=GLOBAL_FONT_BOLD, fg="black", bg=WHITE_BG, wraplength=250, justify="left")
+        self.item_name_label = tk.Label(item_details_frame, text="", font=GLOBAL_FONT_BOLD, fg="black", bg=WHITE_BG, wraplength=150, justify="left") # Reduced wraplength
         self.item_name_label.pack(anchor="w")
-        self.item_desc_label = tk.Label(item_details_frame, text="", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG, wraplength=250, justify="left")
+        self.item_desc_label = tk.Label(item_details_frame, text="", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG, wraplength=150, justify="left") # Reduced wraplength
         self.item_desc_label.pack(anchor="w")
         self.item_price_label = tk.Label(item_details_frame, text="P0.00", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG)
-        self.item_price_label.pack(anchor="w", pady=(5,0))
+        self.item_price_label.pack(anchor="w", pady=(2,0))
 
         # --- Delivery Info ---
         delivery_frame = tk.Frame(self, bg=LIGHT_BG)
-        delivery_frame.pack(fill="x", padx=30, pady=10)
+        delivery_frame.pack(fill="x", padx=15, pady=5) # Reduced padding
         tk.Label(delivery_frame, text="Estimated delivery: May 8-9", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG).pack(anchor="w")
         tk.Label(delivery_frame, text="Standard shipping", font=GLOBAL_FONT, fg="gray", bg=LIGHT_BG).pack(anchor="w")
         self.shipping_cost_label = tk.Label(delivery_frame, text="P36.00", font=GLOBAL_FONT, fg="gray", bg=LIGHT_BG)
@@ -73,33 +73,30 @@ class CheckoutScreen(tk.Frame):
 
         # --- Order Summary ---
         summary_frame = tk.Frame(self, bg=LIGHT_BG, bd=1, relief="solid", highlightbackground=BORDER_COLOR, highlightthickness=1)
-        summary_frame.pack(fill="x", padx=30, pady=10)
+        summary_frame.pack(fill="x", padx=15, pady=5) # Reduced padding
 
-        tk.Label(summary_frame, text="Order summary", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG).grid(row=0, column=0, columnspan=2, sticky="w", padx=10, pady=5)
+        tk.Label(summary_frame, text="Order summary", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG).grid(row=0, column=0, columnspan=2, sticky="w", padx=5, pady=3) # Reduced padding
         
-        # Subtotal
-        tk.Label(summary_frame, text="Subtotal", font=GLOBAL_FONT, fg="gray", bg=LIGHT_BG).grid(row=1, column=0, sticky="w", padx=10, pady=2)
+        tk.Label(summary_frame, text="Subtotal", font=GLOBAL_FONT, fg="gray", bg=LIGHT_BG).grid(row=1, column=0, sticky="w", padx=5, pady=1) # Reduced padding
         self.subtotal_label = tk.Label(summary_frame, text="P0.00", font=GLOBAL_FONT, fg="gray", bg=LIGHT_BG)
-        self.subtotal_label.grid(row=1, column=1, sticky="e", padx=10, pady=2)
+        self.subtotal_label.grid(row=1, column=1, sticky="e", padx=5, pady=1)
 
-        # Shipping
-        tk.Label(summary_frame, text="Shipping", font=GLOBAL_FONT, fg="gray", bg=LIGHT_BG).grid(row=2, column=0, sticky="w", padx=10, pady=2)
+        tk.Label(summary_frame, text="Shipping", font=GLOBAL_FONT, fg="gray", bg=LIGHT_BG).grid(row=2, column=0, sticky="w", padx=5, pady=1) # Reduced padding
         self.summary_shipping_label = tk.Label(summary_frame, text="P0.00", font=GLOBAL_FONT, fg="gray", bg=LIGHT_BG)
-        self.summary_shipping_label.grid(row=2, column=1, sticky="e", padx=10, pady=2)
+        self.summary_shipping_label.grid(row=2, column=1, sticky="e", padx=5, pady=1)
 
-        # Total
-        tk.Label(summary_frame, text="Total", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG).grid(row=3, column=0, sticky="w", padx=10, pady=5)
+        tk.Label(summary_frame, text="Total", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG).grid(row=3, column=0, sticky="w", padx=5, pady=3) # Reduced padding
         self.total_label = tk.Label(summary_frame, text="P0.00", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG)
-        self.total_label.grid(row=3, column=1, sticky="e", padx=10, pady=5)
+        self.total_label.grid(row=3, column=1, sticky="e", padx=5, pady=3)
 
-        summary_frame.grid_columnconfigure(1, weight=1) # Allow total column to expand
+        summary_frame.grid_columnconfigure(1, weight=1)
 
         # --- Payment Method ---
         payment_frame = tk.Frame(self, bg=LIGHT_BG)
-        payment_frame.pack(fill="x", padx=30, pady=10)
+        payment_frame.pack(fill="x", padx=15, pady=5) # Reduced padding
         tk.Label(payment_frame, text="Payment method", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG).pack(anchor="w")
         cash_delivery_frame = tk.Frame(payment_frame, bg=LIGHT_BG)
-        cash_delivery_frame.pack(fill="x", pady=5)
+        cash_delivery_frame.pack(fill="x", pady=2) # Reduced padding
         tk.Label(cash_delivery_frame, text="Cash on delivery", font=GLOBAL_FONT, fg="gray", bg=LIGHT_BG).pack(side="left")
         self.check_mark_label = tk.Label(cash_delivery_frame, image=self.check_mark_img, bg=LIGHT_BG)
         self.check_mark_label.pack(side="right")
@@ -107,12 +104,12 @@ class CheckoutScreen(tk.Frame):
 
         # --- CHECK OUT NOW! Button ---
         checkout_button_frame = tk.Frame(self, bg=LIGHT_BG)
-        checkout_button_frame.pack(fill="x", pady=20)
+        checkout_button_frame.pack(fill="x", pady=10) # Reduced padding
         self.checkout_now_button = tk.Button(checkout_button_frame, text="CHECK OUT NOW!", font=HEADER_FONT,
                                              fg=PUP_RED, bg=PUP_GOLD, activebackground=PUP_RED,
                                              activeforeground="white", bd=0, relief="flat",
                                              command=self.process_checkout)
-        self.checkout_now_button.pack(pady=10)
+        self.checkout_now_button.pack(pady=5) # Reduced padding
 
         self.load_checkout_details()
 
@@ -135,7 +132,6 @@ class CheckoutScreen(tk.Frame):
             subtotal += price * quantity
             total_items += quantity
             
-            # Use details of the first item for the main display on this screen
             if first_item_details is None:
                 first_item_details = {
                     "name": name,
@@ -144,41 +140,41 @@ class CheckoutScreen(tk.Frame):
                     "img_path": img_path
                 }
         
-        # Display first item's details or a placeholder if somehow no products
         if first_item_details:
             self.item_name_label.config(text=first_item_details['name'])
             self.item_desc_label.config(text=first_item_details['desc'])
             self.item_price_label.config(text=f"P{first_item_details['price']:.2f}")
             item_image_full_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'images', first_item_details['img_path'])
-            item_img = load_image(item_image_full_path, (100, 100))
+            item_img = load_image(item_image_full_path, (80, 80)) # Reduced image size
             if item_img:
                 self.item_image_label.config(image=item_img)
-                self.item_image_label.image = item_img # Keep reference
+                self.item_image_label.image = item_img
         else:
             self.item_name_label.config(text="No items in cart")
             self.item_desc_label.config(text="")
             self.item_price_label.config(text="P0.00")
-            self.item_image_label.config(image='') # Clear image
+            self.item_image_label.config(image='')
 
 
-        # Calculate shipping cost (example: flat rate)
-        shipping_cost = 36.00 # From PDF
+        shipping_cost = 36.00
         total_amount = subtotal + shipping_cost
 
-        # Update summary labels
         self.subtotal_label.config(text=f"P{subtotal:.2f}")
         self.summary_shipping_label.config(text=f"P{shipping_cost:.2f}")
         self.shipping_cost_label.config(text=f"P{shipping_cost:.2f}")
         self.total_label.config(text=f"P{total_amount:.2f}")
 
-        # Update the "1 item, total P176.00" label (dynamic based on total_items)
         if total_items == 1:
             item_text = "1 item"
         else:
             item_text = f"{total_items} items"
+        # Re-create/update this label as it's not a fixed part of the __init__ structure.
+        # Ensure it's removed if it exists before re-creating.
+        if hasattr(self, 'summary_frame_title_label'):
+            self.summary_frame_title_label.destroy()
         self.summary_frame_title_label = tk.Label(self, text=f"{item_text}, total P{total_amount:.2f}",
                                                   font=GLOBAL_FONT, fg="gray", bg=LIGHT_BG)
-        self.summary_frame_title_label.pack(pady=5) # Place it below the summary frame for now
+        self.summary_frame_title_label.pack(pady=5)
 
 
     def process_checkout(self):
@@ -193,9 +189,8 @@ class CheckoutScreen(tk.Frame):
             messagebox.showwarning("Checkout", "Your cart is empty!")
             return
 
-        # Calculate total amount (re-calculate to be safe)
         subtotal = 0.0
-        product_details = {} # Store details for order_items
+        product_details = {}
         for prod_id, quantity in cart_items.items():
             product_data = self.db.fetch_one("SELECT name, price, stock_quantity FROM products WHERE id = ?", (prod_id,))
             if product_data:
@@ -216,12 +211,10 @@ class CheckoutScreen(tk.Frame):
         if not confirm:
             return
 
-        # Start transaction for order and order items
-        self.db.connect() # Ensure connection is open
+        self.db.connect()
         try:
             self.db.cursor.execute("BEGIN TRANSACTION;")
 
-            # 1. Create the order
             order_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             self.db.cursor.execute(
                 "INSERT INTO orders (user_id, order_date, total_amount, status) VALUES (?, ?, ?, ?)",
@@ -229,25 +222,22 @@ class CheckoutScreen(tk.Frame):
             )
             order_id = self.db.cursor.lastrowid
 
-            # 2. Add order items and update product stock
             for prod_id, details in product_details.items():
                 self.db.cursor.execute(
                     "INSERT INTO order_items (order_id, product_id, quantity, item_price_at_order) VALUES (?, ?, ?, ?)",
                     (order_id, prod_id, details['quantity'], details['price'])
                 )
-                # Update product stock
                 self.db.cursor.execute(
                     "UPDATE products SET stock_quantity = stock_quantity - ?, sales_count = sales_count + ? WHERE id = ?",
                     (details['quantity'], details['quantity'], prod_id)
                 )
 
-            self.db.conn.commit() # Commit transaction
+            self.db.conn.commit()
             messagebox.showinfo("Order Placed", f"Your order (Ref No: {order_id}) has been placed successfully!")
-            self.controller.clear_cart() # Clear cart after successful order
-            self.controller.show_frame("OrderHistoryScreen") # Go to order history
+            self.controller.clear_cart()
+            self.controller.show_frame("OrderHistoryScreen")
         except sqlite3.Error as e:
-            self.db.conn.rollback() # Rollback on error
+            self.db.conn.rollback()
             messagebox.showerror("Order Error", f"Failed to place order: {e}")
         finally:
-            pass # Keep connection open, or close if desired.
-
+            pass

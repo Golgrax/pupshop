@@ -3,7 +3,8 @@ from tkinter import messagebox
 import datetime
 from utils.helpers import (
     load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, GLOBAL_FONT, GLOBAL_FONT_BOLD,
-    TITLE_FONT, HEADER_FONT, BORDER_COLOR, CART_ICON_PATH, USER_ICON_PATH, create_rounded_entry_field
+    TITLE_FONT, HEADER_FONT, BORDER_COLOR, CART_ICON_PATH, USER_ICON_PATH, GRAY_TEXT, # Added GRAY_TEXT if it wasn't already
+    create_rounded_entry_field, create_styled_button, create_rounded_rectangle # <-- Added create_rounded_rectangle here
 )
 
 class ContactUsScreen(tk.Frame):
@@ -15,11 +16,11 @@ class ContactUsScreen(tk.Frame):
         # --- Variables ---
         self.name_var = tk.StringVar()
         self.email_var = tk.StringVar()
-        self.message_var = tk.StringVar() # For Text widget content
+        self.message_var = tk.StringVar()
 
         # --- Top Bar (Icons) ---
         top_bar_frame = tk.Frame(self, bg=LIGHT_BG)
-        top_bar_frame.pack(fill="x", pady=10, padx=20)
+        top_bar_frame.pack(fill="x", pady=5, padx=10) # Reduced padding
 
         # Cart Icon
         self.cart_icon_image = self.controller.cart_icon
@@ -40,41 +41,35 @@ class ContactUsScreen(tk.Frame):
         back_button.pack(side="left", padx=5)
 
         # --- Contact Us Title ---
-        tk.Label(self, text="Contact Us", font=HEADER_FONT, fg=PUP_RED, bg=LIGHT_BG).pack(pady=(40, 20))
+        tk.Label(self, text="Contact Us", font=HEADER_FONT, fg=PUP_RED, bg=LIGHT_BG).pack(pady=(20, 10)) # Reduced padding
 
         # --- Input Fields ---
-        self.name_entry = create_rounded_entry_field(self, "Name:", self.name_var, width=350)
-        self.email_entry = create_rounded_entry_field(self, "Email Address :", self.email_var, width=350)
+        self.name_entry = create_rounded_entry_field(self, "Name:", self.name_var, width=280) # Explicitly set width
+        self.email_entry = create_rounded_entry_field(self, "Email Address :", self.email_var, width=280)
 
-        tk.Label(self, text="Message ?", font=GLOBAL_FONT, fg=PUP_RED, bg=LIGHT_BG).pack(anchor="w", padx=50, pady=(10, 0))
+        tk.Label(self, text="Message ?", font=GLOBAL_FONT, fg=PUP_RED, bg=LIGHT_BG).pack(anchor="w", padx=15, pady=(5, 0)) # Reduced padding
         
         # Custom drawing for Text widget border
         message_frame = tk.Frame(self, bg=LIGHT_BG)
-        message_frame.pack(padx=50, pady=(0, 10))
+        message_frame.pack(padx=15, pady=(0, 5)) # Reduced padding
 
-        message_canvas = tk.Canvas(message_frame, width=350, height=150, bd=0, highlightthickness=0, bg=LIGHT_BG)
+        message_canvas = tk.Canvas(message_frame, width=280, height=120, bd=0, highlightthickness=0, bg=message_frame.cget("bg")) # Reduced size, use parent bg
         message_canvas.pack()
         
         # Draw the rounded rectangle border for the message box
-        message_canvas.create_oval(0, 0, 350, 150, fill="white", outline=PUP_GOLD, width=2)
+        create_rounded_rectangle(message_canvas, 1, 1, 279, 119, radius=15, fill="white", outline=PUP_GOLD, width=2) # Reduced size and radius
 
-        self.message_text = tk.Text(message_canvas, width=40, height=8, font=GLOBAL_FONT, relief="flat", bd=0,
+        self.message_text = tk.Text(message_canvas, font=GLOBAL_FONT, relief="flat", bd=0,
                                     bg="white", fg="gray", insertbackground=PUP_RED)
-        self.message_text.place(x=5, y=5, width=340, height=140) # Place text widget inside canvas
+        self.message_text.place(x=5, y=5, width=270, height=110) # Adjusted place to fit inside canvas
+
 
         # --- Submit Button (Custom Styled Button) ---
         submit_button_frame = tk.Frame(self, bg=LIGHT_BG)
-        submit_button_frame.pack(pady=30)
-        self.submit_button_canvas = tk.Canvas(submit_button_frame, width=150, height=40, bd=0, highlightthickness=0, bg=LIGHT_BG)
+        submit_button_frame.pack(pady=15) # Reduced padding
+        self.submit_button_canvas = create_styled_button(submit_button_frame, "Submit", self.submit_message, PUP_RED, PUP_GOLD, width=120, height=30) # Explicitly set size
         self.submit_button_canvas.pack()
-        
-        # Draw rounded rectangle for the submit button
-        self.submit_button_canvas.create_oval(0, 0, 150, 40, fill=PUP_GOLD, outline=PUP_RED, width=2)
-        submit_button_text = tk.Button(self.submit_button_canvas, text="Submit", font=GLOBAL_FONT_BOLD, fg="black", bg=PUP_GOLD, bd=0,
-                                      activebackground=PUP_RED, activeforeground="white", relief="flat", command=self.submit_message)
-        submit_button_text.place(relx=0.5, rely=0.5, anchor="center", width=140, height=30)
 
-        # Pre-fill if user is logged in
         self.load_user_info()
 
     def load_user_info(self):
@@ -88,7 +83,7 @@ class ContactUsScreen(tk.Frame):
     def submit_message(self):
         name = self.name_var.get().strip()
         email = self.email_var.get().strip()
-        message = self.message_text.get("1.0", tk.END).strip() # Get content from Text widget
+        message = self.message_text.get("1.0", tk.END).strip()
 
         if not name or not email or not message:
             messagebox.showerror("Submission Error", "All fields are required.")
@@ -116,5 +111,4 @@ class ContactUsScreen(tk.Frame):
         self.name_var.set("")
         self.email_var.set("")
         self.message_text.delete("1.0", tk.END)
-        self.load_user_info() # Re-populate if user is logged in
-
+        self.load_user_info()
