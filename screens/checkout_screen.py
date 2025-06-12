@@ -19,30 +19,30 @@ class CheckoutScreen(tk.Frame):
         self.check_mark_img = load_image(CHECK_MARK_PATH, (20, 20))
 
         # --- Top Bar (Icons) ---
-        top_bar_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        top_bar_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         top_bar_frame.pack(fill="x", pady=5, padx=10)
 
         # Cart Icon
         self.cart_icon_image = self.controller.cart_icon
-        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=WHITE_BG, # Changed to WHITE_BG
                                      activebackground=WHITE_BG, command=lambda: self.controller.show_frame("ShoppingCartScreen"))
         self.cart_button.pack(side="right", padx=5)
 
         # User Profile Icon
         self.user_icon_image = self.controller.user_icon
-        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=WHITE_BG, # Changed to WHITE_BG
                                         activebackground=WHITE_BG, command=lambda: self.controller.show_frame("ProfileScreen"))
         self.profile_button.pack(side="right", padx=5)
 
         # Back Button
-        back_button = tk.Button(top_bar_frame, text="< Back to Cart", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, # <--- Changed to WHITE_BG
+        back_button = tk.Button(top_bar_frame, text="< Back to Cart", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, # Changed to WHITE_BG
                                 activebackground=WHITE_BG, activeforeground=PUP_GOLD,
                                 command=lambda: self.controller.show_frame("ShoppingCartScreen"))
         back_button.pack(side="left", padx=5)
 
         # --- "STUDY WITH PASSION" Header ---
-        tk.Label(self, text="STUDY WITH\nPASSION", font=HEADER_FONT, fg=PUP_RED, bg=WHITE_BG, justify="center").pack(pady=(10, 5)) # <--- Changed to WHITE_BG
-        tk.Label(self, text="PUPStudyWithStyle", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG).pack() # <--- Changed to WHITE_BG
+        tk.Label(self, text="STUDY WITH\nPASSION", font=HEADER_FONT, fg=PUP_RED, bg=WHITE_BG, justify="center").pack(pady=(10, 5)) # Changed to WHITE_BG
+        tk.Label(self, text="PUPStudyWithStyle", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG).pack() # Changed to WHITE_BG
 
 
         # --- Item Summary (Example: First item in cart) ---
@@ -63,46 +63,46 @@ class CheckoutScreen(tk.Frame):
         self.item_price_label.pack(anchor="w", pady=(2,0))
 
         # --- Delivery Info ---
-        delivery_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        delivery_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         delivery_frame.pack(fill="x", padx=15, pady=5)
-        tk.Label(delivery_frame, text="Estimated delivery: May 8-9", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG).pack(anchor="w") # <--- Changed to WHITE_BG
-        tk.Label(delivery_frame, text="Standard shipping", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG).pack(anchor="w") # <--- Changed to WHITE_BG
-        self.shipping_cost_label = tk.Label(delivery_frame, text="P36.00", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG) # <--- Changed to WHITE_BG
+        tk.Label(delivery_frame, text="Estimated delivery: May 8-9", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG).pack(anchor="w") # Changed to WHITE_BG
+        tk.Label(delivery_frame, text="Standard shipping", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG).pack(anchor="w") # Changed to WHITE_BG
+        self.shipping_cost_label = tk.Label(delivery_frame, text="P36.00", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG) # Changed to WHITE_BG
         self.shipping_cost_label.pack(side="right", padx=5)
 
         # --- Order Summary ---
-        summary_frame = tk.Frame(self, bg=WHITE_BG, bd=1, relief="solid", highlightbackground=BORDER_COLOR, highlightthickness=1) # <--- Changed to WHITE_BG
+        summary_frame = tk.Frame(self, bg=WHITE_BG, bd=1, relief="solid", highlightbackground=BORDER_COLOR, highlightthickness=1) # Changed to WHITE_BG
         summary_frame.pack(fill="x", padx=15, pady=5)
 
-        tk.Label(summary_frame, text="Order summary", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG).grid(row=0, column=0, columnspan=2, sticky="w", padx=5, pady=3) # <--- Changed to WHITE_BG
+        tk.Label(summary_frame, text="Order summary", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG).grid(row=0, column=0, columnspan=2, sticky="w", padx=5, pady=3) # Changed to WHITE_BG
         
-        tk.Label(summary_frame, text="Subtotal", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG).grid(row=1, column=0, sticky="w", padx=5, pady=1) # <--- Changed to WHITE_BG
-        self.subtotal_label = tk.Label(summary_frame, text="P0.00", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG) # <--- Changed to WHITE_BG
+        tk.Label(summary_frame, text="Subtotal", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG).grid(row=1, column=0, sticky="w", padx=5, pady=1) # Changed to WHITE_BG
+        self.subtotal_label = tk.Label(summary_frame, text="P0.00", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG) # Changed to WHITE_BG
         self.subtotal_label.grid(row=1, column=1, sticky="e", padx=5, pady=1)
 
-        tk.Label(summary_frame, text="Shipping", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG).grid(row=2, column=0, sticky="w", padx=5, pady=1) # <--- Changed to WHITE_BG
-        self.summary_shipping_label = tk.Label(summary_frame, text="P0.00", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG) # <--- Changed to WHITE_BG
+        tk.Label(summary_frame, text="Shipping", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG).grid(row=2, column=0, sticky="w", padx=5, pady=1) # Changed to WHITE_BG
+        self.summary_shipping_label = tk.Label(summary_frame, text="P0.00", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG) # Changed to WHITE_BG
         self.summary_shipping_label.grid(row=2, column=1, sticky="e", padx=5, pady=1)
 
-        tk.Label(summary_frame, text="Total", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG).grid(row=3, column=0, sticky="w", padx=5, pady=3) # <--- Changed to WHITE_BG
-        self.total_label = tk.Label(summary_frame, text="P0.00", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        tk.Label(summary_frame, text="Total", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG).grid(row=3, column=0, sticky="w", padx=5, pady=3) # Changed to WHITE_BG
+        self.total_label = tk.Label(summary_frame, text="P0.00", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG) # Changed to WHITE_BG
         self.total_label.grid(row=3, column=1, sticky="e", padx=5, pady=3)
 
         summary_frame.grid_columnconfigure(1, weight=1)
 
         # --- Payment Method ---
-        payment_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        payment_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         payment_frame.pack(fill="x", padx=15, pady=5)
-        tk.Label(payment_frame, text="Payment method", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG).pack(anchor="w") # <--- Changed to WHITE_BG
-        cash_delivery_frame = tk.Frame(payment_frame, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        tk.Label(payment_frame, text="Payment method", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG).pack(anchor="w") # Changed to WHITE_BG
+        cash_delivery_frame = tk.Frame(payment_frame, bg=WHITE_BG) # Changed to WHITE_BG
         cash_delivery_frame.pack(fill="x", pady=2)
-        tk.Label(cash_delivery_frame, text="Cash on delivery", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG).pack(side="left") # <--- Changed to WHITE_BG
-        self.check_mark_label = tk.Label(cash_delivery_frame, image=self.check_mark_img, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        tk.Label(cash_delivery_frame, text="Cash on delivery", font=GLOBAL_FONT, fg="gray", bg=WHITE_BG).pack(side="left") # Changed to WHITE_BG
+        self.check_mark_label = tk.Label(cash_delivery_frame, image=self.check_mark_img, bg=WHITE_BG) # Changed to WHITE_BG
         self.check_mark_label.pack(side="right")
 
 
         # --- CHECK OUT NOW! Button ---
-        checkout_button_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        checkout_button_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         checkout_button_frame.pack(fill="x", pady=10)
         self.checkout_now_button = tk.Button(checkout_button_frame, text="CHECK OUT NOW!", font=HEADER_FONT,
                                              fg=PUP_RED, bg=PUP_GOLD, activebackground=PUP_RED,
@@ -170,7 +170,7 @@ class CheckoutScreen(tk.Frame):
         if hasattr(self, 'summary_frame_title_label'):
             self.summary_frame_title_label.destroy()
         self.summary_frame_title_label = tk.Label(self, text=f"{item_text}, total P{total_amount:.2f}",
-                                                  font=GLOBAL_FONT, fg="gray", bg=WHITE_BG) # <--- Changed to WHITE_BG
+                                                  font=GLOBAL_FONT, fg="gray", bg=WHITE_BG) # Changed to WHITE_BG
         self.summary_frame_title_label.pack(pady=5)
 
 

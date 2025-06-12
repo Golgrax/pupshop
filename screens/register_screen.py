@@ -19,12 +19,12 @@ class RegisterScreen(tk.Frame):
         self.confirm_password_var = tk.StringVar()
 
         # --- PUP Logo ---
-        self.pup_logo_label = tk.Label(self, image=self.controller.pup_logo, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        self.pup_logo_label = tk.Label(self, image=self.controller.pup_logo, bg=WHITE_BG) # Changed to WHITE_BG
         self.pup_logo_label.pack(pady=(20, 10))
 
         # --- Header Text ---
         self.header_text = tk.Label(self, text="Mula sayo para\nsa bayan",
-                                    font=HEADER_FONT, fg=PUP_RED, bg=WHITE_BG, # <--- Changed to WHITE_BG
+                                    font=HEADER_FONT, fg=PUP_RED, bg=WHITE_BG, # Changed to WHITE_BG
                                     justify="center")
         self.header_text.pack(pady=10)
 
@@ -35,7 +35,7 @@ class RegisterScreen(tk.Frame):
         self.confirm_password_entry = create_rounded_entry_field(self, "Confirm Password :", self.confirm_password_var, is_password=True, width=280)
 
         # --- Buttons using custom styled button function ---
-        button_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        button_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         button_frame.pack(pady=10)
 
         self.back_to_login_button_canvas = create_styled_button(button_frame, "Back to LOGIN", self.go_to_login, BUTTON_BLUE_DARK, BUTTON_BLUE_LIGHT, width=120, height=30)

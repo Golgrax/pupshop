@@ -14,29 +14,29 @@ class OrderHistoryScreen(tk.Frame):
         self.order_list_window_id = None
 
         # --- Top Bar (Icons) ---
-        top_bar_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        top_bar_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         top_bar_frame.pack(fill="x", pady=5, padx=10)
 
         # Cart Icon
         self.cart_icon_image = self.controller.cart_icon
-        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=WHITE_BG, # Changed to WHITE_BG
                                      activebackground=WHITE_BG, command=lambda: self.controller.show_frame("ShoppingCartScreen"))
         self.cart_button.pack(side="right", padx=5)
 
         # User Profile Icon
         self.user_icon_image = self.controller.user_icon
-        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=WHITE_BG, # Changed to WHITE_BG
                                         activebackground=WHITE_BG, command=lambda: self.controller.show_frame("ProfileScreen"))
         self.profile_button.pack(side="right", padx=5)
 
         # Back Button
-        back_button = tk.Button(top_bar_frame, text="< Back to Shop", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, # <--- Changed to WHITE_BG
+        back_button = tk.Button(top_bar_frame, text="< Back to Shop", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, # Changed to WHITE_BG
                                 activebackground=WHITE_BG, activeforeground=PUP_GOLD,
                                 command=lambda: self.controller.show_frame("HomeScreen"))
         back_button.pack(side="left", padx=5)
 
         # --- Order History Header (Custom Canvas Drawing) ---
-        header_canvas = tk.Canvas(self, width=250, height=40, bd=0, highlightthickness=0, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        header_canvas = tk.Canvas(self, width=250, height=40, bd=0, highlightthickness=0, bg=WHITE_BG) # Changed to WHITE_BG
         header_canvas.pack(pady=10)
         create_rounded_rectangle(header_canvas, 1, 1, 249, 39, radius=20,
                                  fill=PUP_GOLD, outline=PUP_RED, width=2)
@@ -44,16 +44,16 @@ class OrderHistoryScreen(tk.Frame):
 
 
         # --- Order Table Header ---
-        header_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        header_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         header_frame.pack(fill="x", padx=10, pady=(10, 3))
 
-        tk.Label(header_frame, text="Ref No.", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, relief="flat").pack(side="left", expand=True) # <--- Changed to WHITE_BG
-        tk.Label(header_frame, text="Order\nstatus", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, relief="flat").pack(side="left", expand=True) # <--- Changed to WHITE_BG
-        tk.Label(header_frame, text="Quantity", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, relief="flat").pack(side="left", expand=True) # <--- Changed to WHITE_BG
-        tk.Label(header_frame, text="Payment", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, relief="flat").pack(side="left", expand=True) # <--- Changed to WHITE_BG
+        tk.Label(header_frame, text="Ref No.", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, relief="flat").pack(side="left", expand=True) # Changed to WHITE_BG
+        tk.Label(header_frame, text="Order\nstatus", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, relief="flat").pack(side="left", expand=True) # Changed to WHITE_BG
+        tk.Label(header_frame, text="Quantity", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, relief="flat").pack(side="left", expand=True) # Changed to WHITE_BG
+        tk.Label(header_frame, text="Payment", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, relief="flat").pack(side="left", expand=True) # Changed to WHITE_BG
 
         # --- Scrollable Area for Order Items ---
-        self.order_canvas = tk.Canvas(self, bg=WHITE_BG, highlightthickness=0) # <--- Changed to WHITE_BG
+        self.order_canvas = tk.Canvas(self, bg=WHITE_BG, highlightthickness=0) # Changed to WHITE_BG
         self.order_canvas.pack(side="left", fill="both", expand=True, padx=10)
 
         self.order_scrollbar = tk.Scrollbar(self.order_canvas, orient="vertical", command=self.order_canvas.yview) # Scrollbar is child of canvas
@@ -62,7 +62,7 @@ class OrderHistoryScreen(tk.Frame):
         self.order_canvas.configure(yscrollcommand=self.order_scrollbar.set)
         self.order_canvas.bind('<Configure>', self._on_canvas_configure)
 
-        self.order_list_frame = tk.Frame(self.order_canvas, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        self.order_list_frame = tk.Frame(self.order_canvas, bg=WHITE_BG) # Changed to WHITE_BG
         self.order_list_window_id = self.order_canvas.create_window(0, 0, window=self.order_list_frame, anchor="nw")
 
         self.load_orders()
@@ -86,7 +86,7 @@ class OrderHistoryScreen(tk.Frame):
         orders = self.db.fetch_all("SELECT id, order_date, total_amount, status FROM orders WHERE user_id = ? ORDER BY order_date DESC", (user_id,))
 
         if not orders:
-            tk.Label(self.order_list_frame, text="No orders found.", font=GLOBAL_FONT_BOLD, fg=GRAY_TEXT, bg=WHITE_BG).pack(pady=50) # <--- Changed to WHITE_BG
+            tk.Label(self.order_list_frame, text="No orders found.", font=GLOBAL_FONT_BOLD, fg=GRAY_TEXT, bg=WHITE_BG).pack(pady=50) # Changed to WHITE_BG
             return
 
         for order in orders:
@@ -104,7 +104,7 @@ class OrderHistoryScreen(tk.Frame):
         # Scrolling Fix: Force update and trigger configure event after content loads
         self.order_list_frame.update_idletasks()
         self.order_canvas.config(scrollregion=self.order_canvas.bbox("all"))
-        self.order_canvas.event_generate('<Configure>')
+        # No need for event_generate here as bbox("all") updates scrollregion.
             
     def view_order_details(self, order_id):
         messagebox.showinfo("Order Details", f"Viewing details for Order ID: {order_id}")

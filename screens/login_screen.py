@@ -7,25 +7,28 @@ from utils.helpers import (
 )
 class LoginScreen(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg=WHITE_BG) # <--- THIS IS THE PRIMARY CHANGE
+        tk.Frame.__init__(self, parent, bg=WHITE_BG) # Make screen background uniformly white
         self.controller = controller
         self.db = self.controller.get_db()
 
+        # --- Variables ---
         self.email_var = tk.StringVar()
         self.password_var = tk.StringVar()
 
-        self.pup_logo_label = tk.Label(self, image=self.controller.pup_logo, bg=WHITE_BG) # <--- Ensure this is WHITE_BG
+        # --- PUP Logo ---
+        self.pup_logo_label = tk.Label(self, image=self.controller.pup_logo, bg=WHITE_BG) # Changed to WHITE_BG
         self.pup_logo_label.pack(pady=(20, 10))
 
         self.header_text = tk.Label(self, text="Welcome Back!",
-                                    font=HEADER_FONT, fg=PUP_RED, bg=WHITE_BG) # <--- Ensure this is WHITE_BG
+                                    font=HEADER_FONT, fg=PUP_RED, bg=WHITE_BG) # Changed to WHITE_BG
         self.header_text.pack(pady=10)
 
-        # Input fields
+        # Input fields using custom rounded entry
         self.email_entry = create_rounded_entry_field(self, "Email Address :", self.email_var, width=280)
         self.password_entry = create_rounded_entry_field(self, "Password:", self.password_var, is_password=True, width=280)
 
-        button_frame = tk.Frame(self, bg=WHITE_BG) # <--- Ensure this is WHITE_BG
+        # Buttons using custom styled buttons
+        button_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         button_frame.pack(pady=10)
 
         self.login_button_canvas = create_styled_button(button_frame, "LOGIN", self.login_user, PUP_RED, PUP_GOLD, width=120, height=30)
@@ -33,7 +36,7 @@ class LoginScreen(tk.Frame):
 
         self.register_button_canvas = create_styled_button(button_frame, "Register Here", self.go_to_register, BUTTON_BLUE_DARK, BUTTON_BLUE_LIGHT, width=120, height=30)
         self.register_button_canvas.pack(pady=5)
-        
+
     def login_user(self):
         email = self.email_var.get().strip()
         password = self.password_var.get()

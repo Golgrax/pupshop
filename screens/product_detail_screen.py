@@ -15,23 +15,23 @@ class ProductDetailScreen(tk.Frame):
         self.current_product = None
 
         # --- Top Bar (Icons) ---
-        top_bar_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        top_bar_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         top_bar_frame.pack(fill="x", pady=5, padx=10)
 
         # Cart Icon
         self.cart_icon_image = self.controller.cart_icon
-        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=WHITE_BG, # Changed to WHITE_BG
                                      activebackground=WHITE_BG, command=lambda: self.controller.show_frame("ShoppingCartScreen"))
         self.cart_button.pack(side="right", padx=5)
 
         # User Profile Icon
         self.user_icon_image = self.controller.user_icon
-        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=WHITE_BG, # Changed to WHITE_BG
                                         activebackground=WHITE_BG, command=lambda: self.controller.show_frame("ProfileScreen"))
         self.profile_button.pack(side="right", padx=5)
 
         # Back Button
-        back_button = tk.Button(top_bar_frame, text="< Back", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, # <--- Changed to WHITE_BG
+        back_button = tk.Button(top_bar_frame, text="< Back", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, # Changed to WHITE_BG
                                 activebackground=WHITE_BG, activeforeground=PUP_GOLD,
                                 command=lambda: self.controller.show_frame("HomeScreen"))
         back_button.pack(side="left", padx=5)
@@ -39,40 +39,40 @@ class ProductDetailScreen(tk.Frame):
 
         # --- Product Image ---
         self.product_display_image = None
-        self.product_image_label = tk.Label(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        self.product_image_label = tk.Label(self, bg=WHITE_BG) # Changed to WHITE_BG
         self.product_image_label.pack(pady=5)
 
         # --- Price and Sold Count ---
-        price_sold_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        price_sold_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         price_sold_frame.pack(fill="x", padx=15, pady=3)
 
-        self.price_label = tk.Label(price_sold_frame, text="P0.00", font=HEADER_FONT, fg=PUP_RED, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        self.price_label = tk.Label(price_sold_frame, text="P0.00", font=HEADER_FONT, fg=PUP_RED, bg=WHITE_BG) # Changed to WHITE_BG
         self.price_label.pack(side="left")
-        self.sold_label = tk.Label(price_sold_frame, text="0 sold", font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        self.sold_label = tk.Label(price_sold_frame, text="0 sold", font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG) # Changed to WHITE_BG
         self.sold_label.pack(side="right")
 
         # --- Product Name ---
-        self.name_label = tk.Label(self, text="", font=TITLE_FONT, fg=GRAY_TEXT, bg=WHITE_BG, wraplength=280, justify="left") # <--- Changed to WHITE_BG
+        self.name_label = tk.Label(self, text="", font=TITLE_FONT, fg=GRAY_TEXT, bg=WHITE_BG, wraplength=280, justify="left") # Changed to WHITE_BG
         self.name_label.pack(fill="x", padx=15, pady=(0, 5))
 
         # --- Separator Line ---
         tk.Frame(self, bg=BORDER_COLOR, height=1).pack(fill="x", padx=10, pady=5)
 
         # --- Details Section (Guaranteed, Free Return, etc.) ---
-        details_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        details_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         details_frame.pack(fill="x", padx=15, pady=3)
 
-        tk.Label(details_frame, text="Guaranteed to get by : 17-19 May", font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(anchor="w", pady=1) # <--- Changed to WHITE_BG
-        tk.Label(details_frame, text="Free & Easy Return", font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(anchor="w", pady=1) # <--- Changed to WHITE_BG
-        tk.Label(details_frame, text="Merchandise Protection", font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(anchor="w", pady=1) # <--- Changed to WHITE_BG
+        tk.Label(details_frame, text="Guaranteed to get by : 17-19 May", font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(anchor="w", pady=1) # Changed to WHITE_BG
+        tk.Label(details_frame, text="Free & Easy Return", font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(anchor="w", pady=1) # Changed to WHITE_BG
+        tk.Label(details_frame, text="Merchandise Protection", font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(anchor="w", pady=1) # Changed to WHITE_BG
 
         # --- Separator Line ---
         tk.Frame(self, bg=BORDER_COLOR, height=1).pack(fill="x", padx=10, pady=5)
 
         # --- Select Variation (Placeholder) ---
-        tk.Label(self, text="Select variation", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG).pack(anchor="w", padx=15, pady=(0, 3)) # <--- Changed to WHITE_BG
+        tk.Label(self, text="Select variation", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG).pack(anchor="w", padx=15, pady=(0, 3)) # Changed to WHITE_BG
         
-        variation_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        variation_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         variation_frame.pack(fill="x", padx=15, pady=(0, 5))
 
         tk.Label(variation_frame, text="36", font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG, width=4, relief="solid", bd=1).pack(side="left", padx=3)
@@ -83,17 +83,17 @@ class ProductDetailScreen(tk.Frame):
         tk.Frame(self, bg=BORDER_COLOR, height=1).pack(fill="x", padx=10, pady=5)
 
         # --- Product Rating (Simulated) ---
-        rating_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        rating_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         rating_frame.pack(fill="x", padx=15, pady=(0, 10))
 
-        tk.Label(rating_frame, text="4.9", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG).pack(side="left") # <--- Changed to WHITE_BG
-        tk.Label(rating_frame, text="★", font=(GLOBAL_FONT[0], 12), fg=PUP_GOLD, bg=WHITE_BG).pack(side="left", padx=(0, 3)) # <--- Changed to WHITE_BG
-        self.rating_text_label = tk.Label(rating_frame, text="Product rating (100)", font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        tk.Label(rating_frame, text="4.9", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG).pack(side="left") # Changed to WHITE_BG
+        tk.Label(rating_frame, text="★", font=(GLOBAL_FONT[0], 12), fg=PUP_GOLD, bg=WHITE_BG).pack(side="left", padx=(0, 3)) # Changed to WHITE_BG
+        self.rating_text_label = tk.Label(rating_frame, text="Product rating (100)", font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG) # Changed to WHITE_BG
         self.rating_text_label.pack(side="left")
 
 
         # --- Action Buttons ---
-        button_actions_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        button_actions_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         button_actions_frame.pack(fill="x", pady=5)
 
         # Load button images (ADJUSTED SIZE to match create_styled_button, as these are meant to be images)
@@ -101,13 +101,13 @@ class ProductDetailScreen(tk.Frame):
         self.buy_now_img = load_image(BUY_NOW_BTN_PATH, (120, 30))
 
         # Add to Cart Button
-        self.add_to_cart_button = tk.Button(button_actions_frame, image=self.add_to_cart_img, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+        self.add_to_cart_button = tk.Button(button_actions_frame, image=self.add_to_cart_img, bd=0, bg=WHITE_BG, # Changed to WHITE_BG
                                             activebackground=WHITE_BG, command=self.add_to_cart_action)
         self.add_to_cart_button.image = self.add_to_cart_img
         self.add_to_cart_button.pack(side="left", padx=(10, 5))
 
         # Buy Now Button
-        self.buy_now_button = tk.Button(button_actions_frame, image=self.buy_now_img, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+        self.buy_now_button = tk.Button(button_actions_frame, image=self.buy_now_img, bd=0, bg=WHITE_BG, # Changed to WHITE_BG
                                         activebackground=WHITE_BG, command=self.buy_now_action)
         self.buy_now_button.image = self.buy_now_img
         self.buy_now_button.pack(side="left", padx=(5, 0))

@@ -19,41 +19,41 @@ class ContactUsScreen(tk.Frame):
         self.message_var = tk.StringVar()
 
         # --- Top Bar (Icons) ---
-        top_bar_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        top_bar_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         top_bar_frame.pack(fill="x", pady=5, padx=10)
 
         # Cart Icon
         self.cart_icon_image = self.controller.cart_icon
-        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=WHITE_BG, # Changed to WHITE_BG
                                      activebackground=WHITE_BG, command=lambda: self.controller.show_frame("ShoppingCartScreen"))
         self.cart_button.pack(side="right", padx=5)
 
         # User Profile Icon
         self.user_icon_image = self.controller.user_icon
-        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=WHITE_BG, # Changed to WHITE_BG
                                         activebackground=WHITE_BG, command=lambda: self.controller.show_frame("ProfileScreen"))
         self.profile_button.pack(side="right", padx=5)
 
         # Back Button
-        back_button = tk.Button(top_bar_frame, text="< Back to Shop", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, # <--- Changed to WHITE_BG
+        back_button = tk.Button(top_bar_frame, text="< Back to Shop", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, # Changed to WHITE_BG
                                 activebackground=WHITE_BG, activeforeground=PUP_GOLD,
                                 command=lambda: self.controller.show_frame("HomeScreen"))
         back_button.pack(side="left", padx=5)
 
         # --- Contact Us Title ---
-        tk.Label(self, text="Contact Us", font=HEADER_FONT, fg=PUP_RED, bg=WHITE_BG).pack(pady=(20, 10)) # <--- Changed to WHITE_BG
+        tk.Label(self, text="Contact Us", font=HEADER_FONT, fg=PUP_RED, bg=WHITE_BG).pack(pady=(20, 10)) # Changed to WHITE_BG
 
         # --- Input Fields ---
         self.name_entry = create_rounded_entry_field(self, "Name:", self.name_var, width=280)
         self.email_entry = create_rounded_entry_field(self, "Email Address :", self.email_var, width=280)
 
-        tk.Label(self, text="Message ?", font=GLOBAL_FONT, fg=PUP_RED, bg=WHITE_BG).pack(anchor="w", padx=15, pady=(5, 0)) # <--- Changed to WHITE_BG
+        tk.Label(self, text="Message ?", font=GLOBAL_FONT, fg=PUP_RED, bg=WHITE_BG).pack(anchor="w", padx=15, pady=(5, 0)) # Changed to WHITE_BG
         
         # Custom drawing for Text widget border
-        message_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        message_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         message_frame.pack(padx=15, pady=(0, 5))
 
-        message_canvas = tk.Canvas(message_frame, width=280, height=120, bd=0, highlightthickness=0, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        message_canvas = tk.Canvas(message_frame, width=280, height=120, bd=0, highlightthickness=0, bg=WHITE_BG) # Changed to WHITE_BG
         message_canvas.pack()
         
         # Draw the rounded rectangle border for the message box
@@ -65,7 +65,7 @@ class ContactUsScreen(tk.Frame):
 
 
         # --- Submit Button (Custom Styled Button) ---
-        submit_button_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        submit_button_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         submit_button_frame.pack(pady=15)
         self.submit_button_canvas = create_styled_button(submit_button_frame, "Submit", self.submit_message, PUP_RED, PUP_GOLD, width=120, height=30)
         self.submit_button_canvas.pack()

@@ -20,39 +20,39 @@ class InventoryManagementScreen(tk.Frame):
         self.price_var = tk.StringVar()
 
         # --- Top Bar (Icons) ---
-        top_bar_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        top_bar_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         top_bar_frame.pack(fill="x", pady=5, padx=10)
 
         # Cart Icon (can be hidden for admin screen)
         self.cart_icon_image = self.controller.cart_icon
-        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=WHITE_BG, # Changed to WHITE_BG
                                      activebackground=WHITE_BG, command=lambda: self.controller.show_frame("ShoppingCartScreen"))
         self.cart_button.pack(side="right", padx=5)
 
         # User Profile Icon (can be replaced by admin logout)
         self.user_icon_image = self.controller.user_icon
-        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=WHITE_BG, # Changed to WHITE_BG
                                         activebackground=WHITE_BG, command=lambda: self.controller.show_frame("ProfileScreen"))
         self.profile_button.pack(side="right", padx=5)
 
         # Back Button (to home or admin dashboard)
-        back_button = tk.Button(top_bar_frame, text="< Back", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, # <--- Changed to WHITE_BG
+        back_button = tk.Button(top_bar_frame, text="< Back", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, # Changed to WHITE_BG
                                 activebackground=WHITE_BG, activeforeground=PUP_GOLD,
                                 command=lambda: self.controller.show_frame("HomeScreen"))
         back_button.pack(side="left", padx=5)
 
         # --- Inventory Management Header ---
-        tk.Label(self, text="INVENTORY MANAGEMENT", font=HEADER_FONT, fg=PUP_RED, bg=WHITE_BG).pack(pady=(20, 10)) # <--- Changed to WHITE_BG
+        tk.Label(self, text="INVENTORY MANAGEMENT", font=HEADER_FONT, fg=PUP_RED, bg=WHITE_BG).pack(pady=(20, 10)) # Changed to WHITE_BG
         tk.Frame(self, bg=PUP_RED, height=2).pack(fill="x", padx=15, pady=(0, 10))
 
         # --- Input Fields for Item Management ---
-        input_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        input_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         input_frame.pack(fill="x", padx=15, pady=5)
 
         def create_input_row(parent, label_text, textvariable, is_readonly=False):
-            row_frame = tk.Frame(parent, bg=WHITE_BG) # <--- Changed to WHITE_BG
+            row_frame = tk.Frame(parent, bg=WHITE_BG) # Changed to WHITE_BG
             row_frame.pack(fill="x", pady=1)
-            tk.Label(row_frame, text=label_text, font=GLOBAL_FONT, fg=PUP_RED, bg=WHITE_BG, width=10, anchor="w").pack(side="left") # <--- Changed to WHITE_BG
+            tk.Label(row_frame, text=label_text, font=GLOBAL_FONT, fg=PUP_RED, bg=WHITE_BG, width=10, anchor="w").pack(side="left") # Changed to WHITE_BG
             entry = tk.Entry(row_frame, textvariable=textvariable, font=GLOBAL_FONT, relief="solid", bd=1,
                              highlightbackground=PUP_GOLD, highlightthickness=1, bg="white", fg="gray", insertbackground=PUP_RED)
             entry.pack(side="left", fill="x", expand=True)
@@ -66,7 +66,7 @@ class InventoryManagementScreen(tk.Frame):
         self.price_entry = create_input_row(input_frame, "PRICE:", self.price_var)
 
         # --- Action Buttons ---
-        button_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        button_frame = tk.Frame(self, bg=WHITE_BG) # Changed to WHITE_BG
         button_frame.pack(pady=10)
 
         def create_simple_button(parent, text, command, bg_color):
@@ -114,7 +114,7 @@ class InventoryManagementScreen(tk.Frame):
 
     def load_products(self):
         for i in self.inventory_tree.get_children():
-            self.inventory_tree.delete(i)
+            i.delete(i) # Fix from 'i' to 'self.inventory_tree.delete(i)'
 
         products = self.db.fetch_all("SELECT id, name, stock_quantity, price FROM products ORDER BY id")
         for prod in products:
