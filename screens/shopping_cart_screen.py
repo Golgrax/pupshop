@@ -46,11 +46,11 @@ class ShoppingCartScreen(tk.Frame):
         self.cart_scrollbar.pack(side="right", fill="y")
 
         self.cart_canvas.configure(yscrollcommand=self.cart_scrollbar.set)
-        self.cart_canvas.bind('<Configure>', lambda e: self.cart_canvas.configure(scrollregion = self.cart_canvas.bbox("all")))
+        self.cart_canvas.bind('<Configure>', self._on_canvas_configure) # Calls the new method
 
         self.cart_items_frame = tk.Frame(self.cart_canvas, bg=LIGHT_BG)
-        # Use relwidth=1 so it expands with the canvas. The canvas's width is relative to the container.
-        self.cart_canvas.create_window((0, 0), window=self.cart_items_frame, anchor="nw", relwidth=1) 
+        # Store the window_id for later resizing
+        self.cart_list_window_id = self.cart_canvas.create_window(0, 0, window=self.cart_items_frame, anchor="nw") # Removed relwidth=1
 
         self.cart_item_widgets = {} # To keep track of item frames for quantity updates
 
@@ -64,6 +64,14 @@ class ShoppingCartScreen(tk.Frame):
                                          activeforeground="white", bd=0, relief="flat",
                                          command=self.go_to_checkout)
         self.checkout_button.pack(pady=5) # Reduced padding
+
+    def _on_canvas_configure(self, event):
+        # Update the scroll region to encompass all widgets in the frame
+        self.cart_canvas.configure(scrollregion=self.cart_canvas.bbox("all"))
+
+        # Resize the window (self.cart_items_frame) inside the canvas
+        canvas_width = event.width
+        self.cart_canvas.itemconfig(self.cart_list_window_id, width=canvas_width)
 
     def load_cart_items(self):
         # Clear existing items
@@ -96,7 +104,7 @@ class ShoppingCartScreen(tk.Frame):
             img = load_image(product_image_path, (70, 70)) # Reduced image size
             if img:
                 img_label = tk.Label(left_section, image=img, bg=WHITE_BG)
-                img_label.image = img
+                img_label.image = img # Keep a reference
                 img_label.pack(side="left", padx=3)
             else:
                 tk.Label(left_section, text="[No Image]", font=GLOBAL_FONT, bg=WHITE_BG).pack(side="left", padx=3)
