@@ -1,9 +1,9 @@
 import tkinter as tk
 from tkinter import messagebox
 from utils.helpers import (
-    check_password, load_image, PUP_RED, PUP_GOLD, BUTTON_BLUE_LIGHT, BUTTON_BLUE_DARK,
-    LIGHT_BG, HEADER_FONT, TITLE_FONT, GLOBAL_FONT, create_styled_button,
-    PUP_LOGO_PATH, create_rounded_entry_field
+    check_password, load_image, PUP_RED, PUP_GOLD, BUTTON_BLUE_LIGHT, BUTTON_BLUE_DARK, # <-- Added check_password
+    LIGHT_BG, WHITE_BG, GRAY_TEXT, HEADER_FONT, TITLE_FONT, GLOBAL_FONT, BUTTON_FONT,
+    PUP_LOGO_PATH, create_styled_button, create_rounded_entry_field
 )
 
 class LoginScreen(tk.Frame):
