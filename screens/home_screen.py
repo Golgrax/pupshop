@@ -9,7 +9,7 @@ import os
 
 class HomeScreen(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg=LIGHT_BG)
+        tk.Frame.__init__(self, parent, bg=WHITE_BG) # Make screen background uniformly white
         self.controller = controller
         self.db = self.controller.get_db()
 
@@ -147,3 +147,17 @@ class HomeScreen(tk.Frame):
             messagebox.showwarning("Checkout", "Your shopping cart is empty!")
             return
         self.controller.show_frame("CheckoutScreen")
+
+
+
+
+        # Force the frame to update its size so bbox("all") can calculate correctly
+        self.product_list_frame.update_idletasks() # For home_screen.py
+        # or
+        self.cart_items_frame.update_idletasks() # For shopping_cart_screen.py
+
+        # Re-trigger canvas configure to update scroll region after content is loaded
+        # This will call _on_canvas_configure and update scrollregion and window width
+        self.product_canvas.event_generate('<Configure>') # For home_screen.py
+        # or
+        self.cart_canvas.event_generate('<Configure>') # For shopping_cart_screen.py

@@ -8,7 +8,7 @@ from utils.helpers import (
 
 class RegisterScreen(tk.Frame):
     def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent, bg=LIGHT_BG)
+        tk.Frame.__init__(self, parent, bg=WHITE_BG) # Make screen background uniformly white
         self.controller = controller
         self.db = self.controller.get_db()
 
