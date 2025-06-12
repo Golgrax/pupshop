@@ -27,7 +27,7 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("PUP E-Shop")
-        self.geometry("500x800")
+        self.geometry("360x640") # A common modern phone portrait resolution
         self.resizable(False, False)
         self.configure(bg=LIGHT_BG)
 
@@ -51,11 +51,11 @@ class App(tk.Tk):
         self.outer_canvas = tk.Canvas(self, width=500, height=800, bd=0, highlightthickness=0, bg=LIGHT_BG)
         self.outer_canvas.pack(fill="both", expand=True)
         # Draw the outer rounded rectangle (simulating device border)
-        self.outer_canvas.create_oval(10, 10, 490, 790, fill=WHITE_BG, outline=PUP_RED, width=2) # Main content area
-        # Create a frame to hold all screens, place it inside the canvas.
+        self.outer_canvas = tk.Canvas(self, width=360, height=640, bd=0, highlightthickness=0, bg=LIGHT_BG)
+        self.outer_canvas.pack(fill="both", expand=True)
+        self.outer_canvas.create_oval(5, 5, 355, 635, fill=WHITE_BG, outline=PUP_RED, width=2)
         self.container = tk.Frame(self.outer_canvas, bg=LIGHT_BG)
-        # Calculate position and size to fit within the "rounded" area
-        self.container.place(x=25, y=25, width=450, height=750)
+        self.container.place(x=15, y=15, width=330, height=610) # Adjusted for the new outer size
 
         self.container.grid_rowconfigure(0, weight=1)
         self.container.grid_columnconfigure(0, weight=1)
