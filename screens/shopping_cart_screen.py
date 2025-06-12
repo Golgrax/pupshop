@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from utils.helpers import (
     load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, GLOBAL_FONT, GLOBAL_FONT_BOLD,
-    TITLE_FONT, BORDER_COLOR, CART_ICON_PATH, USER_ICON_PATH
+    TITLE_FONT, HEADER_FONT, BORDER_COLOR, CART_ICON_PATH, USER_ICON_PATH, GRAY_TEXT # <-- Added HEADER_FONT and GRAY_TEXT
 )
 import os
 
