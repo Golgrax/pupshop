@@ -22,55 +22,54 @@ class ProfileScreen(tk.Frame):
         self.address2_contact_var = tk.StringVar()
 
         # --- Top Bar (Icons) ---
-        top_bar_frame = tk.Frame(self, bg=LIGHT_BG)
-        top_bar_frame.pack(fill="x", pady=5, padx=10) # Reduced padding
+        top_bar_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        top_bar_frame.pack(fill="x", pady=5, padx=10)
 
         # Cart Icon
         self.cart_icon_image = self.controller.cart_icon
-        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=LIGHT_BG,
-                                     activebackground=LIGHT_BG, command=lambda: self.controller.show_frame("ShoppingCartScreen"))
+        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+                                     activebackground=WHITE_BG, command=lambda: self.controller.show_frame("ShoppingCartScreen"))
         self.cart_button.pack(side="right", padx=5)
 
         # User Profile Icon (Main profile icon)
         self.user_icon_image = self.controller.user_icon
-        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=LIGHT_BG,
-                                        activebackground=LIGHT_BG, command=lambda: self.controller.show_frame("ProfileScreen"))
+        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+                                        activebackground=WHITE_BG, command=lambda: self.controller.show_frame("ProfileScreen"))
         self.profile_button.pack(side="right", padx=5)
 
         # Back Button
-        back_button = tk.Button(top_bar_frame, text="< Back to Shop", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG, bd=0,
-                                activebackground=LIGHT_BG, activeforeground=PUP_GOLD,
+        back_button = tk.Button(top_bar_frame, text="< Back to Shop", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG, bd=0, # <--- Changed to WHITE_BG
+                                activebackground=WHITE_BG, activeforeground=PUP_GOLD,
                                 command=lambda: self.controller.show_frame("HomeScreen"))
         back_button.pack(side="left", padx=5)
 
         # --- Main User Icon ---
-        self.main_user_icon_image = load_image(USER_ICON_PATH, (80, 80)) # Smaller icon
-        self.main_user_icon_label = tk.Label(self, image=self.main_user_icon_image, bg=LIGHT_BG)
-        self.main_user_icon_label.pack(pady=10) # Reduced padding
+        self.main_user_icon_image = load_image(USER_ICON_PATH, (80, 80))
+        self.main_user_icon_label = tk.Label(self, image=self.main_user_icon_image, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        self.main_user_icon_label.pack(pady=10)
 
         # --- Address 1 Section ---
-        tk.Label(self, text="Address: 1", font=TITLE_FONT, fg=PUP_RED, bg=LIGHT_BG, anchor="w").pack(fill="x", padx=15, pady=(5,2)) # Reduced padding
+        tk.Label(self, text="Address: 1", font=TITLE_FONT, fg=PUP_RED, bg=WHITE_BG, anchor="w").pack(fill="x", padx=15, pady=(5,2)) # <--- Changed to WHITE_BG
         
-        # Use custom rounded entry for consistency, or standard entry with border
-        self.address1_line_entry = create_rounded_entry_field(self, "Address:", self.address1_line_var, width=280) # Explicitly set width
+        self.address1_line_entry = create_rounded_entry_field(self, "Address:", self.address1_line_var, width=280)
         self.address1_name_entry = create_rounded_entry_field(self, "Name:", self.address1_name_var, width=280)
         self.address1_contact_entry = create_rounded_entry_field(self, "Contact No. :", self.address1_contact_var, width=280)
         
         self.save_address1_button = tk.Button(self, text="Save Address 1", font=GLOBAL_FONT_BOLD, fg="white", bg=PUP_GOLD,
                                               activebackground=PUP_RED, bd=0, relief="flat", command=lambda: self.save_address(1))
-        self.save_address1_button.pack(pady=5) # Reduced padding
+        self.save_address1_button.pack(pady=5)
 
 
         # --- Address 2 Section ---
-        tk.Label(self, text="Address: 2", font=TITLE_FONT, fg=PUP_RED, bg=LIGHT_BG, anchor="w").pack(fill="x", padx=15, pady=(10,2)) # Reduced padding
+        tk.Label(self, text="Address: 2", font=TITLE_FONT, fg=PUP_RED, bg=WHITE_BG, anchor="w").pack(fill="x", padx=15, pady=(10,2)) # <--- Changed to WHITE_BG
 
-        self.address2_line_entry = create_rounded_entry_field(self, "Address:", self.address2_line_var, width=280) # Explicitly set width
+        self.address2_line_entry = create_rounded_entry_field(self, "Address:", self.address2_line_var, width=280)
         self.address2_name_entry = create_rounded_entry_field(self, "Name:", self.address2_name_var, width=280)
         self.address2_contact_entry = create_rounded_entry_field(self, "Contact No. :", self.address2_contact_var, width=280)
         
         self.save_address2_button = tk.Button(self, text="Save Address 2", font=GLOBAL_FONT_BOLD, fg="white", bg=PUP_GOLD,
                                               activebackground=PUP_RED, bd=0, relief="flat", command=lambda: self.save_address(2))
-        self.save_address2_button.pack(pady=5) # Reduced padding
+        self.save_address2_button.pack(pady=5)
 
         self.load_addresses()
 

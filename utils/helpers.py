@@ -1,9 +1,10 @@
 import bcrypt
-from PIL import Image, ImageTk, ImageDraw, ImageFont
+from PIL import Image, ImageTk, ImageDraw, ImageFont # Keep ImageFont
 import os
 import tkinter as tk
+import tkinter.font as tkFont # Import tkinter.font for custom font loading
 
-# --- Path Constants (Ensure these are correct and images exist) ---
+# --- Path Constants ---
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IMAGE_DIR = os.path.join(BASE_DIR, 'assets', 'images')
 FONT_DIR = os.path.join(BASE_DIR, 'assets', 'fonts')
@@ -27,12 +28,44 @@ LIGHT_BG = "#F5F5F5" # Outer background color (the 'bezel' of the phone)
 WHITE_BG = "#FFFFFF" # Inner content background color (most of the screen)
 BORDER_COLOR = "#D1D1D1"
 
-# --- Font Constants (ADJUSTED FOR SMALLER SCREEN) ---
+# --- Font Constants (ADJUSTED FOR SMALLER SCREEN & CUSTOM FONT) ---
+# Global Font (General text)
 GLOBAL_FONT = ("Segoe UI", 8)
 GLOBAL_FONT_BOLD = ("Segoe UI", 8, "bold")
+
+# Button Font (Used by create_styled_button)
 BUTTON_FONT = ("Segoe UI", 10, "bold")
-TITLE_FONT = ("Segoe UI", 13, "bold") # For "Order History", "Shopping cart"
-HEADER_FONT = ("Segoe UI", 18, "bold") # For "Mula sayo para sa bayan", "STUDY WITH PASSION"
+
+# Custom RocaOne Font
+ROCA_ONE_FONT_PATH = os.path.join(FONT_DIR, "RocaOne.ttf")
+ROCA_ONE_LOADED = False
+
+try:
+    # Attempt to load the custom font for specific elements
+    _roca_one_base = tkFont.Font(family="RocaOne", exists=True) # Check if it's already loaded by the OS
+    if not _roca_one_base: # If not pre-loaded by OS, load from file
+        tkFont.nametofont("TkDefaultFont").actual() # Initialize TkDefaultFont to ensure font loading works
+        _roca_one_font_instance = tkFont.Font(family="RocaOne", file=ROCA_ONE_FONT_PATH)
+        ROCA_ONE_LOADED = True
+    else:
+        _roca_one_font_instance = tkFont.Font(family="RocaOne")
+        ROCA_ONE_LOADED = True
+except tkFont.Font.ApplicationSpecificError:
+    print(f"Warning: Could not load RocaOne.ttf from {ROCA_ONE_FONT_PATH}. Using fallback font.")
+    ROCA_ONE_LOADED = False
+except Exception as e:
+    print(f"Error loading font: {e}. Using fallback font.")
+    ROCA_ONE_LOADED = False
+
+# Assigning specific fonts based on whether RocaOne loaded
+if ROCA_ONE_LOADED:
+    TITLE_FONT = ("RocaOne", 13) # For "Order History", "Shopping cart"
+    HEADER_FONT = ("RocaOne", 18) # For "Mula sayo para sa bayan", "STUDY WITH PASSION"
+else:
+    # Fallback fonts if RocaOne cannot be loaded
+    TITLE_FONT = ("Segoe UI", 13, "bold")
+    HEADER_FONT = ("Segoe UI", 18, "bold")
+
 
 # --- Helper Functions ---
 def hash_password(password):
@@ -49,7 +82,7 @@ def load_image(path, size=None):
             img = img.resize(size, Image.LANCZOS)
         return ImageTk.PhotoImage(img)
     except FileNotFoundError:
-        print(f"Error: Image not found at {path}")
+        # print(f"Error: Image not found at {path}") # Comment out to reduce console spam
         return None
     except Exception as e:
         print(f"Error loading image {path}: {e}")
@@ -71,7 +104,7 @@ def create_styled_button(parent_frame, text, command, color_dark, color_light, f
     Creates a button with a rounded background using a canvas.
     Returns the canvas containing the button.
     """
-    # The canvas background must match the parent's actual background (now WHITE_BG)
+    # Canvas background must match the parent's (now WHITE_BG for screen frames)
     canvas = tk.Canvas(parent_frame, width=width, height=height, bd=0, highlightthickness=0, bg=WHITE_BG)
     
     # Draw the rounded rectangle background
@@ -87,13 +120,20 @@ def create_styled_button(parent_frame, text, command, color_dark, color_light, f
 
     # Hover effects for visual feedback
     def on_enter(event):
+        # Redraw the rectangle with dark color for hover effect
+        canvas.delete("all") # Clear previous drawing
         create_rounded_rectangle(canvas, 1, 1, width-1, height-1, radius=int(height/2),
                                  fill=color_dark, outline=color_dark, width=1)
-        button.config(fg="white", bg=color_dark)
+        button.config(fg="white", bg=color_dark) # Update button's background
+        # Re-place button to ensure it's on top of new drawing (Tkinter's z-order can be tricky)
+        button.place(relx=0.5, rely=0.5, anchor="center", width=width - 6, height=height - 6) 
     def on_leave(event):
+        # Redraw the rectangle with light color
+        canvas.delete("all") # Clear previous drawing
         create_rounded_rectangle(canvas, 1, 1, width-1, height-1, radius=int(height/2),
                                  fill=color_light, outline=color_dark, width=1)
-        button.config(fg="black", bg=color_light)
+        button.config(fg="black", bg=color_light) # Update button's background
+        button.place(relx=0.5, rely=0.5, anchor="center", width=width - 6, height=height - 6)
 
     button.bind("<Enter>", on_enter)
     button.bind("<Leave>", on_leave)
@@ -124,7 +164,7 @@ def create_rounded_entry_field(parent_frame, label_text, textvariable, is_passwo
 
     # Draw the rounded rectangle border
     create_rounded_rectangle(canvas, 1, 1, canvas_width-1, canvas_height-1, radius=int(entry_height/2),
-                             outline=PUP_RED, width=1, fill="white") # Outline width 1, fill white
+                             outline=PUP_RED, width=1, fill="white")
 
     # The actual Entry widget, placed on the canvas
     entry = tk.Entry(canvas, font=GLOBAL_FONT, relief="flat", bd=0, # Ensure no native border

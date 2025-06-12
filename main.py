@@ -29,7 +29,7 @@ class App(tk.Tk):
         self.title("PUP E-Shop")
         self.geometry("360x640") # Your target window size
         self.resizable(False, False)
-        self.configure(bg=LIGHT_BG) # This sets the very outer window background
+        self.configure(bg=LIGHT_BG) # This sets the very outer window background (the "bezel")
 
         # --- IMPORTANT FIX: Initialize core attributes first ---
         self.db = Database()
@@ -39,7 +39,7 @@ class App(tk.Tk):
         self.shopping_cart = {} # {product_id: quantity}
         self.current_frame_name = None # Initialize before any frames are created
 
-        # Load common images once
+        # Load common images once (ensure these image files exist!)
         self.pup_logo = load_image(PUP_LOGO_PATH, (120, 120))
         self.question_mark_icon = load_image(QUESTION_MARK_PATH, (40, 40))
         self.cart_icon = load_image(CART_ICON_PATH, (30, 30))
@@ -55,18 +55,18 @@ class App(tk.Tk):
         self.outer_canvas = tk.Canvas(self, width=canvas_width, height=canvas_height, bd=0, highlightthickness=0, bg=LIGHT_BG)
         self.outer_canvas.pack(fill="both", expand=True)
 
-        # Draw the rounded rectangle border on the outer_canvas
-        # The coordinates are for the outer edge of the screen frame.
-        create_rounded_rectangle(self.outer_canvas, 5, 5, canvas_width - 5, canvas_height - 5,
-                                 radius=border_radius, fill=WHITE_BG, outline=PUP_RED, width=2)
+        # Draw the rounded rectangle border on the outer_canvas. This creates the "phone screen" shape.
+        create_rounded_rectangle(self.outer_canvas, 5, 5, canvas_width - 5, canvas_height - 5, # Adjusted coords for tighter fit
+                                 radius=border_radius, fill=WHITE_BG, outline=PUP_RED, width=2) # Fill with WHITE_BG
 
         # Create a frame to hold all screens, placed *inside* the drawn rounded area.
-        container_x = 15 # Padding from left/top border (adjust these)
+        # This is where all your screen content will live.
+        container_x = 15 # Padding from left/top of the drawn border
         container_y = 15
         container_width = canvas_width - 2 * container_x
         container_height = canvas_height - 2 * container_y
 
-        self.container = tk.Frame(self.outer_canvas, bg=WHITE_BG) # IMPORTANT: Container bg is WHITE_BG
+        self.container = tk.Frame(self.outer_canvas, bg=WHITE_BG) # IMPORTANT: Container background MUST be WHITE_BG
         self.container.place(x=container_x, y=container_y, width=container_width, height=container_height)
         # --- END CORRECTED SETUP ---
 
@@ -96,7 +96,7 @@ class App(tk.Tk):
         self.show_frame("LoginScreen", animate=False)
 
         # Common help button (bottom right)
-        self.help_button = tk.Button(self.outer_canvas, image=self.question_mark_icon, command=self.show_help, bd=0, bg=LIGHT_BG,
+        self.help_button = tk.Button(self.outer_canvas, image=self.question_mark_icon, command=self.show_help, bd=0, bg=LIGHT_BG, # This button uses LIGHT_BG to blend with window bezel
                                      activebackground=LIGHT_BG)
         self.help_button.place(relx=0.9, rely=0.95, anchor="se", x=-10, y=-10)
 

@@ -13,64 +13,67 @@ class HomeScreen(tk.Frame):
         self.controller = controller
         self.db = self.controller.get_db()
 
-        self.product_list_window_id = None # <--- ADDED: Initialize window ID
+        self.product_list_window_id = None
 
         # --- Top Bar (Icons) ---
-        top_bar_frame = tk.Frame(self, bg=LIGHT_BG)
+        top_bar_frame = tk.Frame(self, bg=WHITE_BG) # <--- Changed to WHITE_BG
         top_bar_frame.pack(fill="x", pady=5, padx=10)
 
         # Cart Icon
         self.cart_icon_image = self.controller.cart_icon
-        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=LIGHT_BG,
-                                     activebackground=LIGHT_BG, command=lambda: self.controller.show_frame("ShoppingCartScreen"))
+        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+                                     activebackground=WHITE_BG, command=lambda: self.controller.show_frame("ShoppingCartScreen"))
         self.cart_button.pack(side="right", padx=5)
 
         # User Profile Icon
         self.user_icon_image = self.controller.user_icon
-        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=LIGHT_BG,
-                                        activebackground=LIGHT_BG, command=lambda: self.controller.show_frame("ProfileScreen"))
+        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=WHITE_BG, # <--- Changed to WHITE_BG
+                                        activebackground=WHITE_BG, command=lambda: self.controller.show_frame("ProfileScreen"))
         self.profile_button.pack(side="right", padx=5)
 
+        # Create a main_content_area frame that will hold the scrollable list and the checkout button
+        main_content_area = tk.Frame(self, bg=WHITE_BG) # <--- Use WHITE_BG
+        main_content_area.pack(fill="both", expand=True)
 
         # --- Campus Banner ---
         self.campus_banner_image = load_image(PUP_CAMPUS_PATH, (300, 120))
-        self.campus_banner_label = tk.Label(self, image=self.campus_banner_image, bg=self.cget("bg"))
+        self.campus_banner_label = tk.Label(main_content_area, image=self.campus_banner_image, bg=WHITE_BG) # <--- Changed to WHITE_BG, child of main_content_area
         self.campus_banner_label.pack(pady=5)
 
         # --- Shopping Cart Title ---
-        self.shopping_cart_title = tk.Label(self, text="Shopping cart", font=TITLE_FONT, fg=PUP_RED, bg=LIGHT_BG, anchor="w")
+        self.shopping_cart_title = tk.Label(main_content_area, text="Shopping cart", font=TITLE_FONT, fg=PUP_RED, bg=WHITE_BG, anchor="w") # <--- Changed to WHITE_BG, child of main_content_area
         self.shopping_cart_title.pack(fill="x", padx=10, pady=(5, 5))
 
         # --- Shop Sections (e.g., StudywithStyle) ---
-        self.study_with_style_frame = tk.Frame(self, bg=LIGHT_BG)
+        self.study_with_style_frame = tk.Frame(main_content_area, bg=WHITE_BG) # <--- Changed to WHITE_BG, child of main_content_area
         self.study_with_style_frame.pack(fill="x", padx=10, pady=5)
 
         self.checkbox_study = tk.BooleanVar(value=True)
         self.checkbox_study_btn = tk.Checkbutton(self.study_with_style_frame, variable=self.checkbox_study,
-                                                 bg=LIGHT_BG, activebackground=LIGHT_BG, bd=0)
+                                                 bg=WHITE_BG, activebackground=WHITE_BG, bd=0) # <--- Changed to WHITE_BG
         self.checkbox_study_btn.pack(side="left", padx=(0, 5))
-        tk.Label(self.study_with_style_frame, text="StudywithStyle", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG).pack(side="left")
+        tk.Label(self.study_with_style_frame, text="StudywithStyle", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=WHITE_BG).pack(side="left") # <--- Changed to WHITE_BG
 
 
         # --- Product List (using a scrollable canvas) ---
-        self.product_canvas = tk.Canvas(self, bg=LIGHT_BG, highlightthickness=0)
-        self.product_canvas.pack(side="left", fill="both", expand=True, padx=(10,0))
+        self.product_canvas = tk.Canvas(main_content_area, bg=WHITE_BG, highlightthickness=0) # <--- Changed to WHITE_BG, child of main_content_area
+        self.product_canvas.pack(side="top", fill="both", expand=True, padx=(10,0)) # Ensure it takes top portion of main_content_area
 
-        self.product_scrollbar = tk.Scrollbar(self, orient="vertical", command=self.product_canvas.yview)
+        self.product_scrollbar = tk.Scrollbar(self.product_canvas, orient="vertical", command=self.product_canvas.yview) # Scrollbar is child of canvas
         self.product_scrollbar.pack(side="right", fill="y")
 
         self.product_canvas.configure(yscrollcommand=self.product_scrollbar.set)
         self.product_canvas.bind('<Configure>', self._on_canvas_configure)
 
-        self.product_list_frame = tk.Frame(self.product_canvas, bg=LIGHT_BG)
-        # Store the window_id, and do NOT use relwidth here
+        self.product_list_frame = tk.Frame(self.product_canvas, bg=WHITE_BG) # <--- Changed to WHITE_BG
         self.product_list_window_id = self.product_canvas.create_window(0, 0, window=self.product_list_frame, anchor="nw")
 
-        self.load_products()
+        self.load_products() # This will now trigger _on_canvas_configure indirectly via event_generate
 
         # --- CHECK OUT Button ---
-        self.checkout_button_frame = tk.Frame(self, bg=LIGHT_BG)
-        self.checkout_button_frame.pack(fill="x", pady=5)
+        # Pack this button frame at the bottom of the main_content_area frame.
+        self.checkout_button_frame = tk.Frame(main_content_area, bg=WHITE_BG) # <--- Changed to WHITE_BG
+        self.checkout_button_frame.pack(side="bottom", fill="x", pady=5)
         self.checkout_button = tk.Button(self.checkout_button_frame, text="CHECK OUT", font=HEADER_FONT,
                                          fg=PUP_RED, bg=PUP_GOLD, activebackground=PUP_RED,
                                          activeforeground="white", bd=0, relief="flat",
@@ -78,14 +81,10 @@ class HomeScreen(tk.Frame):
         self.checkout_button.pack(pady=5)
 
     def _on_canvas_configure(self, event):
-        # Update the scroll region to encompass all widgets in the frame
         self.product_canvas.configure(scrollregion=self.product_canvas.bbox("all"))
-
-        # Resize the window (self.product_list_frame) inside the canvas
         canvas_width = event.width
-        if self.product_list_window_id is not None: # <--- ADDED: Check if ID is set
+        if self.product_list_window_id is not None:
             self.product_canvas.itemconfig(self.product_list_window_id, width=canvas_width)
-
 
     def load_products(self):
         for widget in self.product_list_frame.winfo_children():
@@ -133,6 +132,11 @@ class HomeScreen(tk.Frame):
             for child in product_frame.winfo_children():
                 child.bind("<Button-1>", lambda e, p_id=product_id: self.go_to_product_detail(p_id))
 
+        # --- Scrolling Fix: Force update and trigger configure event after content loads ---
+        self.product_list_frame.update_idletasks() # Force geometry calculations
+        self.product_canvas.config(scrollregion=self.product_canvas.bbox("all")) # Set scrollregion based on content
+        self.product_canvas.event_generate('<Configure>') # Trigger configure event to resize window inside canvas
+
 
     def add_item_to_cart_and_refresh(self, product_id, quantity_label):
         self.controller.add_to_cart(product_id, 1)
@@ -147,17 +151,3 @@ class HomeScreen(tk.Frame):
             messagebox.showwarning("Checkout", "Your shopping cart is empty!")
             return
         self.controller.show_frame("CheckoutScreen")
-
-
-
-
-        # Force the frame to update its size so bbox("all") can calculate correctly
-        self.product_list_frame.update_idletasks() # For home_screen.py
-        # or
-        self.cart_items_frame.update_idletasks() # For shopping_cart_screen.py
-
-        # Re-trigger canvas configure to update scroll region after content is loaded
-        # This will call _on_canvas_configure and update scrollregion and window width
-        self.product_canvas.event_generate('<Configure>') # For home_screen.py
-        # or
-        self.cart_canvas.event_generate('<Configure>') # For shopping_cart_screen.py
