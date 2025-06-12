@@ -2,10 +2,9 @@ import tkinter as tk
 from tkinter import messagebox
 from utils.helpers import (
     load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, GLOBAL_FONT, GLOBAL_FONT_BOLD,
-    TITLE_FONT, HEADER_FONT, BORDER_COLOR, CART_ICON_PATH, USER_ICON_PATH, GRAY_TEXT, # <-- Added GRAY_TEXT here
+    TITLE_FONT, HEADER_FONT, BORDER_COLOR, CART_ICON_PATH, USER_ICON_PATH, GRAY_TEXT, # <-- GRAY_TEXT must be here
     create_rounded_rectangle
 )
-
 class OrderHistoryScreen(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent, bg=LIGHT_BG)
