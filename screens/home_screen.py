@@ -58,11 +58,24 @@ class HomeScreen(tk.Frame):
         self.product_scrollbar.pack(side="right", fill="y")
 
         self.product_canvas.configure(yscrollcommand=self.product_scrollbar.set)
-        self.product_canvas.bind('<Configure>', lambda e: self.product_canvas.configure(scrollregion = self.product_canvas.bbox("all")))
+        self.product_canvas.bind('<Configure>', self._on_canvas_configure)
+
+    def _on_canvas_configure(self, event):
+        # Update the scroll region to encompass all widgets in the frame
+        self.product_canvas.configure(scrollregion=self.product_canvas.bbox("all"))
+
+        # Resize the window (self.product_list_frame) inside the canvas
+        canvas_width = event.width
+        # Update the width of the window item to match the canvas's new width
+        self.product_canvas.itemconfig(self.product_list_window_id, width=canvas_width)
+
+        # You might also need to update the frame's width directly if it's not expanding
+        # self.product_list_frame.update_idletasks() # Ensure sizes are computed
+        # self.product_list_frame.config(width=canvas_width) # Not always necessary if relwidth was the goal
 
         self.product_list_frame = tk.Frame(self.product_canvas, bg=LIGHT_BG)
-        # Use relwidth=1 for responsiveness to canvas size
-        self.product_canvas.create_window((0, 0), window=self.product_list_frame, anchor="nw", relwidth=1)
+        # Store the window_id, as create_window returns an ID for the created item
+        self.product_list_window_id = self.product_canvas.create_window(0, 0, window=self.product_list_frame, anchor="nw") # Removed relwidth=1
 
         self.load_products()
 
