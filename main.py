@@ -1,17 +1,17 @@
 import tkinter as tk
 from tkinter import messagebox
 import os
-# import time # This import isn't actually used, can be removed
 
 # Import database and helper utilities
 from utils.database import Database
 from utils.helpers import (
     load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, PUP_LOGO_PATH,
-    QUESTION_MARK_PATH, CART_ICON_PATH, USER_ICON_PATH, create_rounded_rectangle,
-    HEADER_FONT, TITLE_FONT, GLOBAL_FONT
+    QUESTION_MARK_PATH, CART_ICON_PATH, USER_ICON_PATH,
+    HEADER_FONT, TITLE_FONT, GLOBAL_FONT,
+    create_rounded_rectangle # We will use this here for the main border as well, not create_oval
 )
 
-# Import screen modules
+# Import screen modules (ensure all imports are correct in these files too as per previous steps)
 from screens.login_screen import LoginScreen
 from screens.register_screen import RegisterScreen
 from screens.home_screen import HomeScreen
@@ -21,47 +21,61 @@ from screens.checkout_screen import CheckoutScreen
 from screens.order_history_screen import OrderHistoryScreen
 from screens.profile_screen import ProfileScreen
 from screens.contact_us_screen import ContactUsScreen
-from screens.inventory_management_screen import InventoryManagementScreen # For future admin features
+from screens.inventory_management_screen import InventoryManagementScreen
 
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("PUP E-Shop")
-        self.geometry("360x640") # A common modern phone portrait resolution
+        self.geometry("360x640") # This is your target window size
         self.resizable(False, False)
         self.configure(bg=LIGHT_BG)
 
         # --- IMPORTANT FIX: Initialize core attributes first ---
         self.db = Database()
-        self.db.create_tables() # This might trigger product seeding, which might use image paths etc.
+        self.db.create_tables()
 
         self.current_user_id = None
         self.shopping_cart = {} # {product_id: quantity}
         self.current_frame_name = None # <--- Initialize this *before* any frames are created
 
-        # Load common images once (needs to be after `self.db` for pathing)
-        self.pup_logo = load_image(PUP_LOGO_PATH, (120, 120))
-        self.question_mark_icon = load_image(QUESTION_MARK_PATH, (40, 40))
-        self.cart_icon = load_image(CART_ICON_PATH, (30, 30))
-        self.user_icon = load_image(USER_ICON_PATH, (30, 30))
+        # Load common images once
+        self.pup_logo = load_image(PUP_LOGO_PATH, (120, 120)) # Ensure this image exists
+        self.question_mark_icon = load_image(QUESTION_MARK_PATH, (40, 40)) # Ensure this image exists
+        self.cart_icon = load_image(CART_ICON_PATH, (30, 30)) # Ensure this image exists
+        self.user_icon = load_image(USER_ICON_PATH, (30, 30)) # Ensure this image exists
         # --- End of crucial initializations ---
 
-        # To simulate the rounded phone screen border, we draw a rounded rectangle on a canvas
-        # and place the main content frame inside it. This is a common workaround.
-        # To simulate the rounded phone screen border, we draw a rounded rectangle on a canvas
-        # and place the main content frame inside it.
-        self.outer_canvas = tk.Canvas(self, width=360, height=640, bd=0, highlightthickness=0, bg=LIGHT_BG)
+        # --- CORRECTED CANVAS AND CONTAINER SETUP ---
+        # This single canvas will be the background for the rounded phone border.
+        canvas_width = 360
+        canvas_height = 640
+        border_radius = 20 # Adjust this for desired roundedness of the outer frame
+
+        self.outer_canvas = tk.Canvas(self, width=canvas_width, height=canvas_height, bd=0, highlightthickness=0, bg=LIGHT_BG)
         self.outer_canvas.pack(fill="both", expand=True)
-        # Draw the outer rounded rectangle (simulating device border)
-        self.outer_canvas.create_oval(5, 5, 355, 635, fill=WHITE_BG, outline=PUP_RED, width=2)
-        self.container = tk.Frame(self.outer_canvas, bg=LIGHT_BG)
-        self.container.place(x=15, y=15, width=330, height=610) # Adjusted for the new outer size
+
+        # Draw the rounded rectangle border on the outer_canvas
+        # The coordinates are for the outer edge of the screen frame.
+        create_rounded_rectangle(self.outer_canvas, 10, 10, canvas_width - 10, canvas_height - 10,
+                                 radius=border_radius, fill=WHITE_BG, outline=PUP_RED, width=2)
+
+        # Create a frame to hold all screens, placed *inside* the drawn rounded area.
+        # Its placement and dimensions must be carefully calculated to fit within the drawn border.
+        # For a 360x640 window with 10px outer padding and 20px radius, roughly:
+        container_x = 15 # Padding from left/top border
+        container_y = 15
+        container_width = canvas_width - 2 * container_x # Total width - 2*padding
+        container_height = canvas_height - 2 * container_y # Total height - 2*padding
+
+        self.container = tk.Frame(self.outer_canvas, bg=WHITE_BG) # Use WHITE_BG for inner content area
+        self.container.place(x=container_x, y=container_y, width=container_width, height=container_height)
+        # --- END CORRECTED SETUP ---
 
         self.container.grid_rowconfigure(0, weight=1)
         self.container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        # List all screen classes to initialize
         screen_classes = [
             LoginScreen,
             RegisterScreen,
@@ -81,22 +95,19 @@ class App(tk.Tk):
             self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
-        # Initial screen: Login or Register
-        self.show_frame("LoginScreen", animate=False) # No animation for initial display
+        self.show_frame("LoginScreen", animate=False)
 
         # Common help button (bottom right)
+        # Place it relative to the outer_canvas
         self.help_button = tk.Button(self.outer_canvas, image=self.question_mark_icon, command=self.show_help, bd=0, bg=LIGHT_BG,
                                      activebackground=LIGHT_BG)
         self.help_button.place(relx=0.9, rely=0.95, anchor="se", x=-10, y=-10)
 
 
     def show_frame(self, page_name, product_id=None, animate=True):
-        """
-        Switches between frames with an optional slide animation.
-        """
+        # ... (rest of the show_frame method remains the same)
         new_frame = self.frames[page_name]
 
-        # Pass data to specific screens if needed
         if page_name == "ProductDetailScreen" and product_id is not None:
             new_frame.load_product(product_id)
         elif page_name == "ShoppingCartScreen":
@@ -106,26 +117,34 @@ class App(tk.Tk):
         elif page_name == "ProfileScreen":
             new_frame.load_addresses()
         elif page_name == "InventoryManagementScreen":
-             new_frame.load_products() # Assuming this screen loads products
+             new_frame.load_products()
+
+        # The important change is here, setting the initial position
+        # For the first frame, current_frame_name is None, so it directly raises.
+        # For subsequent frames, old_frame will be placed to the left.
+        # New frame is placed to the right if animating.
 
         if self.current_frame_name is None or not animate:
-            # No animation if it's the first frame or animation is disabled
             new_frame.tkraise()
             self.current_frame_name = page_name
             return
 
         old_frame = self.frames[self.current_frame_name]
-        width = self.container.winfo_width() # Get current width of the container
+        
+        # Get width of the container frame, not the main window
+        width = self.container.winfo_width() # This is critical for animation to work relative to container
 
-        # Place the new frame to the right of the old frame for a left-swipe effect
         new_frame.place(x=width, y=0, relwidth=1, relheight=1)
         new_frame.tkraise() # Bring new frame to top
 
-        # Animation loop
-        step = 25 # Pixels to move per step
-        delay = 10 # Milliseconds per step
+        step = 25
+        delay = 10
 
         def animate_swipe():
+            # Check if widgets are still managed by place()
+            if not old_frame.winfo_ismapped() or not new_frame.winfo_ismapped():
+                return # Stop animation if frames are no longer mapped
+
             current_x_old = old_frame.winfo_x()
             current_x_new = new_frame.winfo_x()
 
@@ -135,7 +154,6 @@ class App(tk.Tk):
                 new_frame.place(x=current_x_new - step, y=0, relwidth=1, relheight=1)
                 self.after(delay, animate_swipe)
             else:
-                # Animation finished, snap to final positions
                 old_frame.place_forget() # Hide old frame
                 new_frame.place(x=0, y=0, relwidth=1, relheight=1) # Ensure new frame is correctly placed
                 self.current_frame_name = page_name
