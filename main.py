@@ -7,8 +7,9 @@ from utils.database import Database
 from utils.helpers import (
     load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, PUP_LOGO_PATH,
     QUESTION_MARK_PATH, CART_ICON_PATH, USER_ICON_PATH,
-    HEADER_FONT, TITLE_FONT, GLOBAL_FONT,
-    create_rounded_rectangle # Ensure create_rounded_rectangle is imported
+    HEADER_FONT, TITLE_FONT, GLOBAL_FONT, # These are initially defaults, will be updated by load_custom_fonts
+    create_rounded_rectangle,
+    load_custom_fonts # <--- IMPORT THE NEW FONT LOADING FUNCTION
 )
 
 # Import screen modules
@@ -27,17 +28,17 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("PUP E-Shop")
-        self.geometry("360x640") # Your target window size
+        self.geometry("360x640")
         self.resizable(False, False)
-        self.configure(bg=LIGHT_BG) # This sets the very outer window background (the "bezel")
+        self.configure(bg=LIGHT_BG)
 
         # --- IMPORTANT FIX: Initialize core attributes first ---
         self.db = Database()
         self.db.create_tables()
 
         self.current_user_id = None
-        self.shopping_cart = {} # {product_id: quantity}
-        self.current_frame_name = None # Initialize before any frames are created
+        self.shopping_cart = {}
+        self.current_frame_name = None
 
         # Load common images once (ensure these image files exist!)
         self.pup_logo = load_image(PUP_LOGO_PATH, (120, 120))
@@ -46,27 +47,26 @@ class App(tk.Tk):
         self.user_icon = load_image(USER_ICON_PATH, (30, 30))
         # --- End of crucial initializations ---
 
+        # --- FONT LOADING FIX: Load custom fonts after Tkinter root is ready ---
+        load_custom_fonts() # <--- CALL THE FONT LOADING FUNCTION HERE
+
         # --- CORRECTED CANVAS AND CONTAINER SETUP ---
         canvas_width = 360
         canvas_height = 640
-        border_radius = 20 # Adjust this for desired roundedness of the outer frame
+        border_radius = 20
 
-        # Create a single outer canvas for the rounded border effect
         self.outer_canvas = tk.Canvas(self, width=canvas_width, height=canvas_height, bd=0, highlightthickness=0, bg=LIGHT_BG)
         self.outer_canvas.pack(fill="both", expand=True)
 
-        # Draw the rounded rectangle border on the outer_canvas. This creates the "phone screen" shape.
-        create_rounded_rectangle(self.outer_canvas, 5, 5, canvas_width - 5, canvas_height - 5, # Adjusted coords for tighter fit
-                                 radius=border_radius, fill=WHITE_BG, outline=PUP_RED, width=2) # Fill with WHITE_BG
+        create_rounded_rectangle(self.outer_canvas, 5, 5, canvas_width - 5, canvas_height - 5,
+                                 radius=border_radius, fill=WHITE_BG, outline=PUP_RED, width=2)
 
-        # Create a frame to hold all screens, placed *inside* the drawn rounded area.
-        # This is where all your screen content will live.
-        container_x = 15 # Padding from left/top of the drawn border
+        container_x = 15
         container_y = 15
         container_width = canvas_width - 2 * container_x
         container_height = canvas_height - 2 * container_y
 
-        self.container = tk.Frame(self.outer_canvas, bg=WHITE_BG) # IMPORTANT: Container background MUST be WHITE_BG
+        self.container = tk.Frame(self.outer_canvas, bg=WHITE_BG)
         self.container.place(x=container_x, y=container_y, width=container_width, height=container_height)
         # --- END CORRECTED SETUP ---
 
@@ -95,19 +95,15 @@ class App(tk.Tk):
 
         self.show_frame("LoginScreen", animate=False)
 
-        # Common help button (bottom right)
-        self.help_button = tk.Button(self.outer_canvas, image=self.question_mark_icon, command=self.show_help, bd=0, bg=LIGHT_BG, # This button uses LIGHT_BG to blend with window bezel
+        self.help_button = tk.Button(self.outer_canvas, image=self.question_mark_icon, command=self.show_help, bd=0, bg=LIGHT_BG,
                                      activebackground=LIGHT_BG)
         self.help_button.place(relx=0.9, rely=0.95, anchor="se", x=-10, y=-10)
 
 
     def show_frame(self, page_name, product_id=None, animate=True):
-        """
-        Switches between frames with an optional slide animation.
-        """
+        # ... (rest of the show_frame method remains the same) ...
         new_frame = self.frames[page_name]
 
-        # Pass data to specific screens if needed
         if page_name == "ProductDetailScreen" and product_id is not None:
             new_frame.load_product(product_id)
         elif page_name == "ShoppingCartScreen":
@@ -126,7 +122,7 @@ class App(tk.Tk):
 
         old_frame = self.frames[self.current_frame_name]
         
-        width = self.container.winfo_width() # Critical for animation to work relative to container
+        width = self.container.winfo_width()
 
         new_frame.place(x=width, y=0, relwidth=1, relheight=1)
         new_frame.tkraise()
