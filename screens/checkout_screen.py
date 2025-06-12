@@ -2,7 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 from utils.helpers import (
     load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, GLOBAL_FONT, GLOBAL_FONT_BOLD,
-    TITLE_FONT, HEADER_FONT, CHECK_MARK_PATH, CART_ICON_PATH, USER_ICON_PATH
+    TITLE_FONT, HEADER_FONT, CHECK_MARK_PATH, CART_ICON_PATH, USER_ICON_PATH,
+    BORDER_COLOR, GRAY_TEXT # <-- Added BORDER_COLOR and GRAY_TEXT
 )
 import datetime
 
