@@ -1,0 +1,110 @@
+import tkinter as tk
+from tkinter import messagebox
+from utils.helpers import (
+    load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, GLOBAL_FONT, GLOBAL_FONT_BOLD,
+    TITLE_FONT, HEADER_FONT, BORDER_COLOR, CART_ICON_PATH, USER_ICON_PATH, create_rounded_rectangle
+)
+
+class OrderHistoryScreen(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent, bg=LIGHT_BG)
+        self.controller = controller
+        self.db = self.controller.get_db()
+
+        # --- Top Bar (Icons) ---
+        top_bar_frame = tk.Frame(self, bg=LIGHT_BG)
+        top_bar_frame.pack(fill="x", pady=10, padx=20)
+
+        # Cart Icon
+        self.cart_icon_image = self.controller.cart_icon
+        self.cart_button = tk.Button(top_bar_frame, image=self.cart_icon_image, bd=0, bg=LIGHT_BG,
+                                     activebackground=LIGHT_BG, command=lambda: self.controller.show_frame("ShoppingCartScreen"))
+        self.cart_button.pack(side="right", padx=5)
+
+        # User Profile Icon
+        self.user_icon_image = self.controller.user_icon
+        self.profile_button = tk.Button(top_bar_frame, image=self.user_icon_image, bd=0, bg=LIGHT_BG,
+                                        activebackground=LIGHT_BG, command=lambda: self.controller.show_frame("ProfileScreen"))
+        self.profile_button.pack(side="right", padx=5)
+
+        # Back Button
+        back_button = tk.Button(top_bar_frame, text="< Back to Shop", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG, bd=0,
+                                activebackground=LIGHT_BG, activeforeground=PUP_GOLD,
+                                command=lambda: self.controller.show_frame("HomeScreen"))
+        back_button.pack(side="left", padx=5)
+
+        # --- Order History Header (Custom Canvas Drawing) ---
+        header_canvas = tk.Canvas(self, width=300, height=50, bd=0, highlightthickness=0, bg=LIGHT_BG)
+        header_canvas.pack(pady=20)
+        # Draw rounded rectangle for the header
+        create_rounded_rectangle(header_canvas, 1, 1, 299, 49, radius=25,
+                                 fill=PUP_GOLD, outline=PUP_RED, width=2)
+        header_canvas.create_text(150, 25, text="Order History", font=TITLE_FONT, fill=PUP_RED, anchor="center")
+
+
+        # --- Order Table Header ---
+        header_frame = tk.Frame(self, bg=LIGHT_BG)
+        header_frame.pack(fill="x", padx=30, pady=(20, 5))
+
+        # Use labels for header, with padding to simulate lines
+        tk.Label(header_frame, text="Ref No.", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG, bd=0, relief="flat").pack(side="left", expand=True)
+        tk.Label(header_frame, text="Order\nstatus", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG, bd=0, relief="flat").pack(side="left", expand=True)
+        tk.Label(header_frame, text="Quantity", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG, bd=0, relief="flat").pack(side="left", expand=True)
+        tk.Label(header_frame, text="Payment", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG, bd=0, relief="flat").pack(side="left", expand=True)
+
+        # --- Scrollable Area for Order Items ---
+        self.order_canvas = tk.Canvas(self, bg=LIGHT_BG, highlightthickness=0)
+        self.order_canvas.pack(side="left", fill="both", expand=True, padx=20)
+
+        self.order_scrollbar = tk.Scrollbar(self, orient="vertical", command=self.order_canvas.yview)
+        self.order_scrollbar.pack(side="right", fill="y")
+
+        self.order_canvas.configure(yscrollcommand=self.order_scrollbar.set)
+        self.order_canvas.bind('<Configure>', lambda e: self.order_canvas.configure(scrollregion = self.order_canvas.bbox("all")))
+
+        self.order_list_frame = tk.Frame(self.order_canvas, bg=LIGHT_BG)
+        self.order_canvas.create_window((0, 0), window=self.order_list_frame, anchor="nw", width=410)
+
+        self.load_orders()
+
+    def load_orders(self):
+        user_id = self.controller.get_current_user()
+        if not user_id:
+            messagebox.showwarning("Access Denied", "Please log in to view your order history.")
+            self.controller.show_frame("LoginScreen")
+            return
+
+        # Clear existing orders
+        for widget in self.order_list_frame.winfo_children():
+            widget.destroy()
+
+        orders = self.db.fetch_all("SELECT id, order_date, total_amount, status FROM orders WHERE user_id = ? ORDER BY order_date DESC", (user_id,))
+
+        if not orders:
+            tk.Label(self.order_list_frame, text="No orders found.", font=GLOBAL_FONT_BOLD, fg=GRAY_TEXT, bg=LIGHT_BG).pack(pady=50)
+            return
+
+        for order in orders:
+            order_id, order_date, total_amount, status = order
+
+            # Get total quantity for this order
+            total_quantity = self.db.fetch_one("SELECT SUM(quantity) FROM order_items WHERE order_id = ?", (order_id,))[0] or 0
+
+            order_frame = tk.Frame(self.order_list_frame, bg=WHITE_BG, bd=1, relief="solid", highlightbackground=BORDER_COLOR, highlightthickness=1)
+            order_frame.pack(fill="x", pady=5, padx=5)
+
+            # Ref No.
+            tk.Label(order_frame, text=order_id, font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(side="left", expand=True)
+            # Order Status
+            tk.Label(order_frame, text=status, font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(side="left", expand=True)
+            # Quantity
+            tk.Label(order_frame, text=total_quantity, font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(side="left", expand=True)
+            # Payment (Assumed 'Paid' if COD)
+            tk.Label(order_frame, text=f"P{total_amount:.2f}", font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(side="left", expand=True)
+            
+            # Optional: Add a button or bind to view order details
+            # tk.Button(order_frame, text="View Details", command=lambda o_id=order_id: self.view_order_details(o_id)).pack(side="right")
+            
+    def view_order_details(self, order_id):
+        # Implement a new screen or pop-up to show detailed items in an order
+        messagebox.showinfo("Order Details", f"Viewing details for Order ID: {order_id}")
