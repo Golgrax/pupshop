@@ -1,12 +1,12 @@
 import tkinter as tk
 from tkinter import messagebox
 import os
-import time
+# import time # This import isn't actually used, can be removed
 
 # Import database and helper utilities
 from utils.database import Database
 from utils.helpers import (
-    load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, PUP_LOGO_PATH, # <-- Added WHITE_BG here
+    load_image, PUP_RED, PUP_GOLD, LIGHT_BG, WHITE_BG, PUP_LOGO_PATH,
     QUESTION_MARK_PATH, CART_ICON_PATH, USER_ICON_PATH, create_rounded_rectangle,
     HEADER_FONT, TITLE_FONT, GLOBAL_FONT
 )
@@ -31,6 +31,21 @@ class App(tk.Tk):
         self.resizable(False, False)
         self.configure(bg=LIGHT_BG)
 
+        # --- IMPORTANT FIX: Initialize core attributes first ---
+        self.db = Database()
+        self.db.create_tables() # This might trigger product seeding, which might use image paths etc.
+
+        self.current_user_id = None
+        self.shopping_cart = {} # {product_id: quantity}
+        self.current_frame_name = None # <--- Initialize this *before* any frames are created
+
+        # Load common images once (needs to be after `self.db` for pathing)
+        self.pup_logo = load_image(PUP_LOGO_PATH, (120, 120))
+        self.question_mark_icon = load_image(QUESTION_MARK_PATH, (40, 40))
+        self.cart_icon = load_image(CART_ICON_PATH, (30, 30))
+        self.user_icon = load_image(USER_ICON_PATH, (30, 30))
+        # --- End of crucial initializations ---
+
         # To simulate the rounded phone screen border, we draw a rounded rectangle on a canvas
         # and place the main content frame inside it. This is a common workaround.
         self.outer_canvas = tk.Canvas(self, width=500, height=800, bd=0, highlightthickness=0, bg=LIGHT_BG)
@@ -40,23 +55,10 @@ class App(tk.Tk):
         # Create a frame to hold all screens, place it inside the canvas.
         self.container = tk.Frame(self.outer_canvas, bg=LIGHT_BG)
         # Calculate position and size to fit within the "rounded" area
-        # This is an approximation and might need fine-tuning for exact visual.
         self.container.place(x=25, y=25, width=450, height=750)
 
         self.container.grid_rowconfigure(0, weight=1)
         self.container.grid_columnconfigure(0, weight=1)
-
-        self.db = Database()
-        self.db.create_tables()
-
-        self.current_user_id = None
-        self.shopping_cart = {} # {product_id: quantity}
-
-        # Load common images once and keep references
-        self.pup_logo = load_image(PUP_LOGO_PATH, (120, 120))
-        self.question_mark_icon = load_image(QUESTION_MARK_PATH, (40, 40))
-        self.cart_icon = load_image(CART_ICON_PATH, (30, 30))
-        self.user_icon = load_image(USER_ICON_PATH, (30, 30))
 
         self.frames = {}
         # List all screen classes to initialize
@@ -79,13 +81,13 @@ class App(tk.Tk):
             self.frames[page_name] = frame
             frame.grid(row=0, column=0, sticky="nsew")
 
-        self.current_frame_name = None # To keep track of the currently displayed frame
-        self.show_frame("LoginScreen") # Start with the login screen
+        # Initial screen: Login or Register
+        self.show_frame("LoginScreen", animate=False) # No animation for initial display
 
         # Common help button (bottom right)
         self.help_button = tk.Button(self.outer_canvas, image=self.question_mark_icon, command=self.show_help, bd=0, bg=LIGHT_BG,
                                      activebackground=LIGHT_BG)
-        self.help_button.place(relx=0.9, rely=0.95, anchor="se", x=-10, y=-10) # Position relative to outer_canvas
+        self.help_button.place(relx=0.9, rely=0.95, anchor="se", x=-10, y=-10)
 
 
     def show_frame(self, page_name, product_id=None, animate=True):
