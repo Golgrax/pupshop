@@ -11,9 +11,11 @@ class OrderHistoryScreen(tk.Frame):
         self.controller = controller
         self.db = self.controller.get_db()
 
+        self.order_list_window_id = None # <--- ADDED: Initialize window ID
+
         # --- Top Bar (Icons) ---
         top_bar_frame = tk.Frame(self, bg=LIGHT_BG)
-        top_bar_frame.pack(fill="x", pady=5, padx=10) # Reduced padding
+        top_bar_frame.pack(fill="x", pady=5, padx=10)
 
         # Cart Icon
         self.cart_icon_image = self.controller.cart_icon
@@ -34,16 +36,16 @@ class OrderHistoryScreen(tk.Frame):
         back_button.pack(side="left", padx=5)
 
         # --- Order History Header (Custom Canvas Drawing) ---
-        header_canvas = tk.Canvas(self, width=250, height=40, bd=0, highlightthickness=0, bg=LIGHT_BG) # Reduced size
-        header_canvas.pack(pady=10) # Reduced padding
-        create_rounded_rectangle(header_canvas, 1, 1, 249, 39, radius=20, # Reduced radius
+        header_canvas = tk.Canvas(self, width=250, height=40, bd=0, highlightthickness=0, bg=LIGHT_BG)
+        header_canvas.pack(pady=10)
+        create_rounded_rectangle(header_canvas, 1, 1, 249, 39, radius=20,
                                  fill=PUP_GOLD, outline=PUP_RED, width=2)
-        header_canvas.create_text(125, 20, text="Order History", font=TITLE_FONT, fill=PUP_RED, anchor="center") # Adjusted text pos
+        header_canvas.create_text(125, 20, text="Order History", font=TITLE_FONT, fill=PUP_RED, anchor="center")
 
 
         # --- Order Table Header ---
         header_frame = tk.Frame(self, bg=LIGHT_BG)
-        header_frame.pack(fill="x", padx=10, pady=(10, 3)) # Reduced padding
+        header_frame.pack(fill="x", padx=10, pady=(10, 3))
 
         tk.Label(header_frame, text="Ref No.", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG, bd=0, relief="flat").pack(side="left", expand=True)
         tk.Label(header_frame, text="Order\nstatus", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG, bd=0, relief="flat").pack(side="left", expand=True)
@@ -52,18 +54,28 @@ class OrderHistoryScreen(tk.Frame):
 
         # --- Scrollable Area for Order Items ---
         self.order_canvas = tk.Canvas(self, bg=LIGHT_BG, highlightthickness=0)
-        self.order_canvas.pack(side="left", fill="both", expand=True, padx=10) # Reduced padding
+        self.order_canvas.pack(side="left", fill="both", expand=True, padx=10)
 
         self.order_scrollbar = tk.Scrollbar(self, orient="vertical", command=self.order_canvas.yview)
         self.order_scrollbar.pack(side="right", fill="y")
 
         self.order_canvas.configure(yscrollcommand=self.order_scrollbar.set)
-        self.order_canvas.bind('<Configure>', lambda e: self.order_canvas.configure(scrollregion = self.order_canvas.bbox("all")))
+        self.order_canvas.bind('<Configure>', self._on_canvas_configure) # <--- MODIFIED LINE (bind to method)
 
         self.order_list_frame = tk.Frame(self.order_canvas, bg=LIGHT_BG)
-        self.order_canvas.create_window((0, 0), window=self.order_list_frame, anchor="nw", relwidth=1) # Use relwidth=1
+        # Store the window_id, and do NOT use relwidth here
+        self.order_list_window_id = self.order_canvas.create_window(0, 0, window=self.order_list_frame, anchor="nw") # <--- MODIFIED LINE
 
         self.load_orders()
+
+    def _on_canvas_configure(self, event): # <--- ADDED: New method
+        # Update the scroll region
+        self.order_canvas.configure(scrollregion=self.order_canvas.bbox("all"))
+
+        # Resize the window (self.order_list_frame) inside the canvas
+        canvas_width = event.width
+        if self.order_list_window_id is not None: # <--- ADDED: Check if ID is set
+            self.order_canvas.itemconfig(self.order_list_window_id, width=canvas_width)
 
     def load_orders(self):
         user_id = self.controller.get_current_user()
@@ -87,15 +99,11 @@ class OrderHistoryScreen(tk.Frame):
             total_quantity = self.db.fetch_one("SELECT SUM(quantity) FROM order_items WHERE order_id = ?", (order_id,))[0] or 0
 
             order_frame = tk.Frame(self.order_list_frame, bg=WHITE_BG, bd=1, relief="solid", highlightbackground=BORDER_COLOR, highlightthickness=1)
-            order_frame.pack(fill="x", pady=3, padx=3) # Reduced padding
+            order_frame.pack(fill="x", pady=3, padx=3)
 
-            # Ref No.
             tk.Label(order_frame, text=order_id, font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(side="left", expand=True)
-            # Order Status
             tk.Label(order_frame, text=status, font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(side="left", expand=True)
-            # Quantity
             tk.Label(order_frame, text=total_quantity, font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(side="left", expand=True)
-            # Payment
             tk.Label(order_frame, text=f"P{total_amount:.2f}", font=GLOBAL_FONT, fg=GRAY_TEXT, bg=WHITE_BG).pack(side="left", expand=True)
             
     def view_order_details(self, order_id):

@@ -13,9 +13,11 @@ class HomeScreen(tk.Frame):
         self.controller = controller
         self.db = self.controller.get_db()
 
+        self.product_list_window_id = None # <--- ADDED: Initialize window ID
+
         # --- Top Bar (Icons) ---
         top_bar_frame = tk.Frame(self, bg=LIGHT_BG)
-        top_bar_frame.pack(fill="x", pady=5, padx=10) # Reduced padding
+        top_bar_frame.pack(fill="x", pady=5, padx=10)
 
         # Cart Icon
         self.cart_icon_image = self.controller.cart_icon
@@ -31,28 +33,28 @@ class HomeScreen(tk.Frame):
 
 
         # --- Campus Banner ---
-        self.campus_banner_image = load_image(PUP_CAMPUS_PATH, (300, 120)) # Adjusted size for 330px container width
+        self.campus_banner_image = load_image(PUP_CAMPUS_PATH, (300, 120))
         self.campus_banner_label = tk.Label(self, image=self.campus_banner_image, bg=self.cget("bg"))
-        self.campus_banner_label.pack(pady=5) # Reduced padding
+        self.campus_banner_label.pack(pady=5)
 
         # --- Shopping Cart Title ---
         self.shopping_cart_title = tk.Label(self, text="Shopping cart", font=TITLE_FONT, fg=PUP_RED, bg=LIGHT_BG, anchor="w")
-        self.shopping_cart_title.pack(fill="x", padx=10, pady=(5, 5)) # Reduced padding
+        self.shopping_cart_title.pack(fill="x", padx=10, pady=(5, 5))
 
         # --- Shop Sections (e.g., StudywithStyle) ---
         self.study_with_style_frame = tk.Frame(self, bg=LIGHT_BG)
-        self.study_with_style_frame.pack(fill="x", padx=10, pady=5) # Reduced padding
+        self.study_with_style_frame.pack(fill="x", padx=10, pady=5)
 
         self.checkbox_study = tk.BooleanVar(value=True)
         self.checkbox_study_btn = tk.Checkbutton(self.study_with_style_frame, variable=self.checkbox_study,
                                                  bg=LIGHT_BG, activebackground=LIGHT_BG, bd=0)
-        self.checkbox_study_btn.pack(side="left", padx=(0, 5)) # Reduced padding
+        self.checkbox_study_btn.pack(side="left", padx=(0, 5))
         tk.Label(self.study_with_style_frame, text="StudywithStyle", font=GLOBAL_FONT_BOLD, fg=PUP_RED, bg=LIGHT_BG).pack(side="left")
 
 
         # --- Product List (using a scrollable canvas) ---
         self.product_canvas = tk.Canvas(self, bg=LIGHT_BG, highlightthickness=0)
-        self.product_canvas.pack(side="left", fill="both", expand=True, padx=(10,0)) # Reduced padding
+        self.product_canvas.pack(side="left", fill="both", expand=True, padx=(10,0))
 
         self.product_scrollbar = tk.Scrollbar(self, orient="vertical", command=self.product_canvas.yview)
         self.product_scrollbar.pack(side="right", fill="y")
@@ -60,33 +62,30 @@ class HomeScreen(tk.Frame):
         self.product_canvas.configure(yscrollcommand=self.product_scrollbar.set)
         self.product_canvas.bind('<Configure>', self._on_canvas_configure)
 
+        self.product_list_frame = tk.Frame(self.product_canvas, bg=LIGHT_BG)
+        # Store the window_id, and do NOT use relwidth here
+        self.product_list_window_id = self.product_canvas.create_window(0, 0, window=self.product_list_frame, anchor="nw")
+
+        self.load_products()
+
+        # --- CHECK OUT Button ---
+        self.checkout_button_frame = tk.Frame(self, bg=LIGHT_BG)
+        self.checkout_button_frame.pack(fill="x", pady=5)
+        self.checkout_button = tk.Button(self.checkout_button_frame, text="CHECK OUT", font=HEADER_FONT,
+                                         fg=PUP_RED, bg=PUP_GOLD, activebackground=PUP_RED,
+                                         activeforeground="white", bd=0, relief="flat",
+                                         command=self.go_to_checkout)
+        self.checkout_button.pack(pady=5)
+
     def _on_canvas_configure(self, event):
         # Update the scroll region to encompass all widgets in the frame
         self.product_canvas.configure(scrollregion=self.product_canvas.bbox("all"))
 
         # Resize the window (self.product_list_frame) inside the canvas
         canvas_width = event.width
-        # Update the width of the window item to match the canvas's new width
-        self.product_canvas.itemconfig(self.product_list_window_id, width=canvas_width)
+        if self.product_list_window_id is not None: # <--- ADDED: Check if ID is set
+            self.product_canvas.itemconfig(self.product_list_window_id, width=canvas_width)
 
-        # You might also need to update the frame's width directly if it's not expanding
-        # self.product_list_frame.update_idletasks() # Ensure sizes are computed
-        # self.product_list_frame.config(width=canvas_width) # Not always necessary if relwidth was the goal
-
-        self.product_list_frame = tk.Frame(self.product_canvas, bg=LIGHT_BG)
-        # Store the window_id, as create_window returns an ID for the created item
-        self.product_list_window_id = self.product_canvas.create_window(0, 0, window=self.product_list_frame, anchor="nw") # Removed relwidth=1
-
-        self.load_products()
-
-        # --- CHECK OUT Button ---
-        self.checkout_button_frame = tk.Frame(self, bg=LIGHT_BG)
-        self.checkout_button_frame.pack(fill="x", pady=5) # Reduced padding
-        self.checkout_button = tk.Button(self.checkout_button_frame, text="CHECK OUT", font=HEADER_FONT,
-                                         fg=PUP_RED, bg=PUP_GOLD, activebackground=PUP_RED,
-                                         activeforeground="white", bd=0, relief="flat",
-                                         command=self.go_to_checkout)
-        self.checkout_button.pack(pady=5) # Reduced padding
 
     def load_products(self):
         for widget in self.product_list_frame.winfo_children():
@@ -99,13 +98,12 @@ class HomeScreen(tk.Frame):
             product_image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'assets', 'images', image_path)
             
             product_frame = tk.Frame(self.product_list_frame, bg=WHITE_BG, bd=1, relief="solid", highlightbackground=BORDER_COLOR, highlightthickness=1)
-            product_frame.pack(fill="x", pady=3, padx=3) # Reduced padding
+            product_frame.pack(fill="x", pady=3, padx=3)
 
-            # Left side: Image
             left_section = tk.Frame(product_frame, bg=WHITE_BG)
-            left_section.pack(side="left", padx=3, pady=3) # Reduced padding
+            left_section.pack(side="left", padx=3, pady=3)
 
-            img = load_image(product_image_path, (60, 60)) # Reduced image size
+            img = load_image(product_image_path, (60, 60))
             if img:
                 img_label = tk.Label(left_section, image=img, bg=WHITE_BG)
                 img_label.image = img
@@ -113,27 +111,24 @@ class HomeScreen(tk.Frame):
             else:
                 tk.Label(left_section, text="[No Image]", font=GLOBAL_FONT, bg=WHITE_BG).pack(side="left", padx=3)
 
-            # Middle section: Product Name and Price
             details_section = tk.Frame(product_frame, bg=WHITE_BG)
-            details_section.pack(side="left", fill="x", expand=True, padx=3) # Reduced padding
+            details_section.pack(side="left", fill="x", expand=True, padx=3)
 
-            tk.Label(details_section, text=name, font=GLOBAL_FONT_BOLD, fg=GRAY_TEXT, bg=WHITE_BG, wraplength=120, justify="left").pack(anchor="w") # Reduced wraplength
+            tk.Label(details_section, text=name, font=GLOBAL_FONT_BOLD, fg=GRAY_TEXT, bg=WHITE_BG, wraplength=120, justify="left").pack(anchor="w")
             tk.Label(details_section, text=f"P{price:.2f}", font=GLOBAL_FONT, fg=PUP_RED, bg=WHITE_BG).pack(anchor="w", pady=(1,0))
 
-            # Right side: Quantity control and Add to Cart
             quantity_control_frame = tk.Frame(product_frame, bg=WHITE_BG)
-            quantity_control_frame.pack(side="right", padx=3, pady=3) # Reduced padding
+            quantity_control_frame.pack(side="right", padx=3, pady=3)
 
             current_quantity = self.controller.get_cart().get(product_id, 0)
             quantity_label = tk.Label(quantity_control_frame, text=f"{current_quantity}", font=GLOBAL_FONT_BOLD, bg=WHITE_BG, fg=PUP_RED)
-            quantity_label.pack(side="right", padx=3) # Reduced padding
+            quantity_label.pack(side="right", padx=3)
 
             add_button = tk.Button(quantity_control_frame, text="+", font=GLOBAL_FONT, fg="white", bg=PUP_RED,
                                    activebackground=PUP_RED, activeforeground="white", bd=0, relief="flat",
                                    command=lambda p_id=product_id, q_label=quantity_label: self.add_item_to_cart_and_refresh(p_id, q_label))
             add_button.pack(side="right")
             
-            # Allow clicking the product frame to view details
             product_frame.bind("<Button-1>", lambda e, p_id=product_id: self.go_to_product_detail(p_id))
             for child in product_frame.winfo_children():
                 child.bind("<Button-1>", lambda e, p_id=product_id: self.go_to_product_detail(p_id))
